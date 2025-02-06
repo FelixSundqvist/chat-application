@@ -8,9 +8,11 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar.tsx";
 import { useState } from "react";
-import { Message } from "@/features/chat/chat.types.ts";
-import ChatMessage from "@/features/chat/components/chat.message.tsx";
-import ChatInput from "@/features/chat/components/chat.input.tsx";
+import { Message } from "./chat.types.ts";
+import ChatMessage from "./components/chat.message.tsx";
+import ChatInput from "./components/chat.input.tsx";
+import { Button } from "@/components/ui/button.tsx";
+import { signOut } from "@/lib/firebase.ts";
 
 function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([
@@ -65,7 +67,9 @@ function ChatPage() {
           <SidebarContent>
             <SidebarGroup>Chats</SidebarGroup>
           </SidebarContent>
-          <SidebarFooter />
+          <SidebarFooter>
+            <Button onClick={signOut}>Sign out</Button>
+          </SidebarFooter>
         </Sidebar>
 
         <div className="flex w-full h-full flex-col gap-2 p-2">
