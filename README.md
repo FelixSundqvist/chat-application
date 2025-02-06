@@ -10,6 +10,9 @@ This repository is using the [Conventional Commits](https://www.conventionalcomm
 
 This is enforced by a pre-commit hook that runs `commitlint` on the commit message.
 
+## Project structure
+
+The frontend folder structure follows the [bulletproof-react](https://github.com/alan2207/bulletproof-react/blob/master/docs/project-structure.md) project structure.
 
 
 

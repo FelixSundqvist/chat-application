@@ -1,0 +1,33 @@
+{
+  "publicRooms": {
+    "public_2ed78991-b880-4951-b086-f5b57f7019d1": {
+      "name": "General"
+    }
+  },
+  "privateRooms": {
+    "private_2ed78991-b880-4951-b086-f5b57f7019d1": {
+      "name": "Test Room"
+    }
+  },
+  "roomMembers": {
+    "private_2ed78991-b880-4951-b086-f5b57f7019d1": {
+      "00000000-0000-0000-0000-000000000000": true
+    }
+  },
+  "messages": {
+    "public_2ed78991-b880-4951-b086-f5b57f7019d1": {
+      "66972027-ded0-453c-9512-173a4b669ac2": {
+        "user_id": "00000000-0000-0000-0000-000000000000",
+        "content": "Welcome to the general room!",
+        "timestamp": 1738875432615
+      }
+    }
+  },
+  "messageSeenAt": {
+    "private_2ed78991-b880-4951-b086-f5b57f7019d1": {
+      "66972027-ded0-453c-9512-173a4b669ac2": {
+        "00000000-0000-0000-0000-000000000000": 1738875432615
+      }
+    }
+  }
+}

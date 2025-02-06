@@ -18,11 +18,23 @@ yarn-error.log*
 *.sln
 *.sw?
 
+# Build files
+dist
+dist-ssr
+
+# Logs
+*.local
+*-debug.log
+
+# Compiled JavaScript files
+*/**/lib/**/*.js
+*/**/lib/**/*.js.map
+.firebaserc
+
+# TypeScript v1 declaration files
+typings/
+
 # Others
 specs.md
 /tmp
 /out-tsc
-
-dist
-dist-ssr
-*.local
