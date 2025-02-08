@@ -7,7 +7,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
-import { signInWithGoogle } from "@/lib/firebase.ts";
+
+import { signInWithGoogle } from "@/lib/firebase/auth.tsx";
 
 function SignInPage() {
   return (

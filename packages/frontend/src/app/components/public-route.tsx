@@ -1,12 +1,10 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuthToken } from "@/stores/auth.ts";
 import { routes } from "../routes.ts";
+import { useFirebaseAuth } from "@/lib/firebase/auth.tsx";
 
 function PublicRoute() {
-  const token = useAuthToken();
-
-  if (token) return <Navigate to={routes.chat} />;
-
+  const { isAuthenticated } = useFirebaseAuth();
+  if (isAuthenticated) return <Navigate to={routes.chat} />;
   return <Outlet />;
 }
 
