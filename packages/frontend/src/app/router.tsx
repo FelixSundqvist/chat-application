@@ -3,8 +3,9 @@ import PublicRoute from "@/app/components/public-route.tsx";
 import { routes } from "@/app/routes.ts";
 import SignInPage from "@/features/sign-in/sign-in.page.tsx";
 import ProtectedRoute from "@/app/components/protected-route.tsx";
-import ChatPage from "@/features/chat/chat.page.tsx";
 import { useFirebaseAuth } from "@/lib/firebase/auth.tsx";
+import ChatLayout from "@/features/chat/chat.layout.tsx";
+import PublicChatRoomPage from "@/features/chat/pages/public-chat-room.page.tsx";
 
 function Router() {
   const { isAuthenticated, hasAuthLoaded } = useFirebaseAuth();
@@ -18,7 +19,12 @@ function Router() {
           <Route path={routes.signIn} element={<SignInPage />} />
         </Route>
         <Route element={<ProtectedRoute />}>
-          <Route path={routes.chat} element={<ChatPage />} />
+          <Route element={<ChatLayout />} path={routes.chat}>
+            <Route
+              element={<PublicChatRoomPage />}
+              path={routes.publicChatRoom}
+            />
+          </Route>
         </Route>
         <Route
           path="*"

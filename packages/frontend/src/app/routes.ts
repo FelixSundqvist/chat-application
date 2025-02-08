@@ -1,11 +1,14 @@
 export const routes = {
   signIn: "/sign-in",
-  chat: "/",
+  chat: "/chat",
+  publicChatRoom: "/chat/public/:roomId",
   chatRoom: "/chat/:roomId",
 };
 
-export const routeLinks = {
+export const routePaths = {
   signIn: () => routes.signIn,
   chat: () => routes.chat,
-  chatRoom: (roomId: string) => `/chat/${roomId}`,
+  publicChatRoom: (roomId: string) =>
+    routes.publicChatRoom.replace(":roomId", roomId),
+  chatRoom: (roomId: string) => routes.chatRoom.replace(":roomId", roomId),
 };

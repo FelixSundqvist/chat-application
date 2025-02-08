@@ -1,4 +1,4 @@
-import { DataSnapshot, get, ref } from "firebase/database";
+import { DataSnapshot, get, off, onValue, ref } from "firebase/database";
 import { useEffect, useState } from "react";
 import { database } from "@/config/firebase.ts";
 
@@ -35,6 +35,39 @@ export function useFirebaseDatabaseValues<T extends { id: string }>(
     get(reference).then((snapshot) => {
       setValues(snapshotToArray<T>(snapshot));
     });
+  }, [path]);
+
+  return values;
+}
+
+/**
+ * Custom hook to fetch and subscribe to values from a Firebase Realtime Database path in real-time.
+ *
+ * @template T - The type of the values being fetched. Must extend an object with an `id` property.
+ * @param {string} path - The path in the Firebase Realtime Database to fetch values from.
+ * @returns {T[]} - An array of values fetched from the specified database path.
+ *
+ * @example
+ * // Usage example:
+ * const messages = useSubscribeToFirebaseDatabaseValues<Message>("messages/$roomId");
+ */
+export function useSubscribeToFirebaseDatabaseValues<T extends { id: string }>(
+  path: string,
+): T[] {
+  const [values, setValues] = useState<T[]>([]);
+
+  useEffect(() => {
+    const callback = (snapshot: DataSnapshot) => {
+      const snapshotArray = snapshotToArray<T>(snapshot);
+      setValues(snapshotArray);
+    };
+
+    const reference = ref(database, path);
+    onValue(reference, callback);
+
+    return () => {
+      off(reference, "value", callback);
+    };
   }, [path]);
 
   return values;

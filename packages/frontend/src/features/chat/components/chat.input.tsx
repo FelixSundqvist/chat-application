@@ -7,7 +7,6 @@ function ChatInput({
   sendMessage: (message: string) => void;
 }) {
   const [message, setMessage] = useState("");
-
   function handleSendMessage() {
     if (message.length === 0) return;
     sendMessage(message);
