@@ -17,8 +17,8 @@ const auth = getAuth(app);
 const database = getDatabase(app);
 
 if (import.meta.env.MODE === "development") {
-  connectAuthEmulator(auth, "http://localhost:9099");
+  connectAuthEmulator(auth, "http://localhost:9099", { disableWarnings: true });
   connectDatabaseEmulator(database, "localhost", 9000);
 }
 
-export { app, auth };
+export { app, auth, database };
