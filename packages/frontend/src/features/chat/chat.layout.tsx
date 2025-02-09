@@ -8,14 +8,17 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLoaderData, useLocation } from "react-router-dom";
 import { routePaths } from "@/app/routes.ts";
-import { useFirebaseDatabaseValues } from "@/lib/firebase/database.ts";
 import { signOut } from "@/lib/firebase/auth.tsx";
-import type { ChatRoom } from "@/lib/firebase/types.ts";
+import type { PrivateChatRoom, PublicChatRoom, WithId } from "@shared/types";
 
 function ChatLayout() {
-  const publicRooms = useFirebaseDatabaseValues<ChatRoom>("publicRooms");
+  const { publicRooms, privateRooms } = useLoaderData<{
+    publicRooms: WithId<PublicChatRoom>[];
+    privateRooms: WithId<PrivateChatRoom>[];
+  }>();
+
   const location = useLocation();
 
   return (
@@ -28,10 +31,22 @@ function ChatLayout() {
           <SidebarContent>
             <SidebarGroup>
               <h2 className={"text-lg"}>Public rooms</h2>
-              {publicRooms.map((room) => (
+              {publicRooms?.map((room) => (
                 <Link
                   key={room.id}
-                  to={routePaths.publicChatRoom(room.id)}
+                  to={routePaths.chatRoom(room.id)}
+                  className="block p-2 underline"
+                >
+                  {room.name}
+                </Link>
+              ))}
+            </SidebarGroup>
+            <SidebarGroup>
+              <h2 className={"text-lg"}>Private rooms</h2>
+              {privateRooms?.map((room) => (
+                <Link
+                  key={room.id}
+                  to={routePaths.chatRoom(room.id)}
                   className="block p-2 underline"
                 >
                   {room.name}

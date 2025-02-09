@@ -1,8 +1,8 @@
 import type { DataSnapshot } from "firebase/database";
 import { get, off, onValue, ref, set } from "firebase/database";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { database } from "@/config/firebase.ts";
-import type { WithId } from "@/lib/firebase/types.ts";
+import type { WithId } from "@shared/types";
 import { v4 } from "uuid";
 import Logger from "@/lib/logger.ts";
 
@@ -16,28 +16,12 @@ function snapshotToArray<T>(snapshot: DataSnapshot): WithId<T>[] {
   }));
 }
 
-/**
- * Custom hook to fetch and subscribe to values from a Firebase Realtime Database path.
- *
- * @template T - The type of the values being fetched.
- * @param {string} path - The path in the Firebase Realtime Database to fetch values from.
- * @returns {WithId<T>[]} - An array of values with their IDs.
- *
- * @example
- * // Usage example:
- * const rooms = useFirebaseDatabaseValues<PublicRoom>("publicRooms");
- */
-export function useFirebaseDatabaseValues<T>(path: string): WithId<T>[] {
-  const [values, setValues] = useState<WithId<T>[]>([]);
-
-  useEffect(() => {
-    const reference = ref(database, path);
-    get(reference).then((snapshot) => {
-      setValues(snapshotToArray<T>(snapshot));
-    });
-  }, [path]);
-
-  return values;
+export async function getFirebaseDatabaseValues<T>(
+  path: string,
+): Promise<WithId<T>[]> {
+  const reference = ref(database, path);
+  const snapshot = await get(reference);
+  return snapshotToArray<T>(snapshot);
 }
 
 /**
@@ -78,7 +62,7 @@ export function useSubscribeToFirebaseDatabaseValues<T>(params: {
     };
   }, [params]);
 
-  return values;
+  return useMemo(() => values, [values]);
 }
 
 /**

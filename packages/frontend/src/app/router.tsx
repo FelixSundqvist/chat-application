@@ -1,42 +1,62 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import PublicRoute from "@/app/components/public-route.tsx";
 import { routes } from "@/app/routes.ts";
 import SignInPage from "@/features/sign-in/sign-in.page.tsx";
 import ProtectedRoute from "@/app/components/protected-route.tsx";
-import { useFirebaseAuth } from "@/lib/firebase/auth.tsx";
 import ChatLayout from "@/features/chat/chat.layout.tsx";
-import PublicChatRoomPage from "@/features/chat/pages/public-chat-room.page.tsx";
+import ChatRoomPage from "@/features/chat/pages/chat-room.page.tsx";
 import NotFoundPage from "@/features/error/not-found.page.tsx";
+import { getFirebaseDatabaseValues } from "@/lib/firebase/database.ts";
+import { auth } from "@/config/firebase.ts";
+import { getValuesFromFunction } from "@/lib/firebase/functions.ts";
 
-function Router() {
-  const { isAuthenticated, hasAuthLoaded } = useFirebaseAuth();
+export const router = createBrowserRouter([
+  {
+    loader: async () => {
+      await auth.authStateReady();
+    },
+  },
+  {
+    element: <PublicRoute />,
+    children: [
+      {
+        path: routes.signIn,
+        element: <SignInPage />,
+      },
+    ],
+  },
+  {
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: routes.chat,
+        loader: async () => {
+          const [publicRooms, privateRooms] = await Promise.all([
+            getFirebaseDatabaseValues("publicRooms"),
+            getValuesFromFunction("fetchUserPrivateRooms"),
+          ]);
 
-  if (!hasAuthLoaded) return <p>Loading...</p>;
-
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<PublicRoute />}>
-          <Route path={routes.signIn} element={<SignInPage />} />
-        </Route>
-        <Route element={<ProtectedRoute />}>
-          <Route element={<ChatLayout />} path={routes.chat}>
-            <Route
-              element={<PublicChatRoomPage />}
-              path={routes.publicChatRoom}
-            />
-          </Route>
-        </Route>
-        <Route path={routes["notFound"]} element={<NotFoundPage />} />
-        <Route
-          path="*"
-          element={
-            <Navigate to={isAuthenticated ? routes.chat : routes.signIn} />
-          }
-        />
-      </Routes>
-    </BrowserRouter>
-  );
-}
-
-export default Router;
+          return {
+            publicRooms,
+            privateRooms,
+          };
+        },
+        element: <ChatLayout />,
+        children: [
+          {
+            path: routes.chatRoom,
+            element: <ChatRoomPage />,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    path: routes.notFound,
+    element: <NotFoundPage />,
+  },
+  {
+    path: "*",
+    element: <Navigate to={routes.signIn} />,
+  },
+]);

@@ -6,6 +6,12 @@ export interface ChatMessage {
   createdAt: number;
 }
 
-export interface ChatRoom {
+export interface PublicChatRoom {
   name: string;
+}
+
+export interface PrivateChatRoom {
+  name: string;
+  createdBy: string;
+  createdAt: number;
 }

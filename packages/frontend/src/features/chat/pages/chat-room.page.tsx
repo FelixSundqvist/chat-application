@@ -1,4 +1,5 @@
 import ChatInput from "@/features/chat/components/chat.input.tsx";
+
 import { useNavigate, useParams } from "react-router-dom";
 import ChatMessage from "@/features/chat/components/chat.message.tsx";
 import {
@@ -6,18 +7,20 @@ import {
   writeToFirebaseDatabase,
 } from "@/lib/firebase/database.ts";
 
-import type { ChatMessage as ChatMessageType } from "@/lib/firebase/types.ts";
+import type { ChatMessage as ChatMessageType } from "@shared/types";
 import { useFirebaseAuth } from "@/lib/firebase/auth.tsx";
+import Logger from "@/lib/logger.ts";
 import { routePaths } from "@/app/routes.ts";
 
-function PublicChatRoomPage() {
+function ChatRoomPage() {
   const { authUser } = useFirebaseAuth();
   const params = useParams<{ roomId: string }>();
   const navigate = useNavigate();
   const chatMessages = useSubscribeToFirebaseDatabaseValues<ChatMessageType>({
     path: `messages/${params.roomId!}`,
     sortFn: (a, b) => a.createdAt - b.createdAt,
-    onError: () => {
+    onError: (e) => {
+      Logger.error(e);
       navigate(routePaths.notFound());
     },
   });
@@ -48,4 +51,4 @@ function PublicChatRoomPage() {
   );
 }
 
-export default PublicChatRoomPage;
+export default ChatRoomPage;

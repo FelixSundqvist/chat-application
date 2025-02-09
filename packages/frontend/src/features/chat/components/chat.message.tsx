@@ -1,10 +1,7 @@
 import { cn } from "@/lib/utils";
 import { useFirebaseAuth } from "@/lib/firebase/auth";
 
-import type {
-  ChatMessage as ChatMessageType,
-  WithId,
-} from "@/lib/firebase/types";
+import type { ChatMessage as ChatMessageType, WithId } from "@shared/types";
 
 const timeFormatter = new Intl.DateTimeFormat(["en", "fi"], {
   dateStyle: "short",

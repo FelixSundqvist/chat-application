@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { connectAuthEmulator, getAuth } from "firebase/auth";
 import { connectDatabaseEmulator, getDatabase } from "firebase/database";
+import { connectFunctionsEmulator, getFunctions } from "firebase/functions";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY as string,
@@ -16,9 +17,12 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
 
+const functions = getFunctions(app);
+
 if (import.meta.env.MODE === "development") {
   connectAuthEmulator(auth, "http://localhost:9099", { disableWarnings: true });
   connectDatabaseEmulator(database, "localhost", 9000);
+  connectFunctionsEmulator(functions, "localhost", 5001);
 }
 
-export { app, auth, database };
+export { app, auth, database, functions };

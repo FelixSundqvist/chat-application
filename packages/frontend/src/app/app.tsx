@@ -1,12 +1,13 @@
 import "./globals.css";
-import Providers from "@/app/providers.tsx";
-import Router from "@/app/router.tsx";
+import { FirebaseAuthProvider } from "@/lib/firebase/auth.tsx";
+import { RouterProvider } from "react-router-dom";
+import { router } from "@/app/router.tsx";
 
 function App() {
   return (
-    <Providers>
-      <Router />
-    </Providers>
+    <FirebaseAuthProvider>
+      <RouterProvider router={router} />
+    </FirebaseAuthProvider>
   );
 }
 
