@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { database } from "@/config/firebase.ts";
 import type { WithId } from "@/lib/firebase/types.ts";
 import { v4 } from "uuid";
+import Logger from "@/lib/logger.ts";
 
 function snapshotToArray<T>(snapshot: DataSnapshot): WithId<T>[] {
   if (!snapshot.exists()) {
@@ -68,7 +69,7 @@ export function useSubscribeToFirebaseDatabaseValues<T>(params: {
 
     const reference = ref(database, path);
     onValue(reference, callback, (error) => {
-      console.error("Error fetching data: ", error);
+      Logger.error("Error fetching data: ", error);
       onError?.(error);
     });
 
@@ -103,10 +104,10 @@ export async function writeToFirebaseDatabase<T>(
     fullPath = `${path}/${v4()}`;
   }
   try {
-    console.log("Writing document to: ", fullPath, data);
+    Logger.log("Writing document to: ", fullPath, data);
 
     await set(ref(database, fullPath), data);
   } catch (error) {
-    console.error("Error writing document: ", error);
+    Logger.error("Error writing document: ", error);
   }
 }
