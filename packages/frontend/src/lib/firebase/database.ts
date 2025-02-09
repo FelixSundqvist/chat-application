@@ -1,10 +1,11 @@
-import { DataSnapshot, get, off, onValue, ref } from "firebase/database";
+import type { DataSnapshot } from "firebase/database";
+import { get, off, onValue, ref, set } from "firebase/database";
 import { useEffect, useState } from "react";
 import { database } from "@/config/firebase.ts";
+import type { WithId } from "@/lib/firebase/types.ts";
+import { v4 } from "uuid";
 
-export function snapshotToArray<T extends { id: string }>(
-  snapshot: DataSnapshot,
-): T[] {
+function snapshotToArray<T>(snapshot: DataSnapshot): WithId<T>[] {
   if (!snapshot.exists()) {
     return [];
   }
@@ -17,18 +18,16 @@ export function snapshotToArray<T extends { id: string }>(
 /**
  * Custom hook to fetch and subscribe to values from a Firebase Realtime Database path.
  *
- * @template T - The type of the values being fetched. Must extend an object with an `id` property.
+ * @template T - The type of the values being fetched.
  * @param {string} path - The path in the Firebase Realtime Database to fetch values from.
- * @returns {T[]} - An array of values fetched from the specified database path.
+ * @returns {WithId<T>[]} - An array of values with their IDs.
  *
  * @example
  * // Usage example:
  * const rooms = useFirebaseDatabaseValues<PublicRoom>("publicRooms");
  */
-export function useFirebaseDatabaseValues<T extends { id: string }>(
-  path: string,
-): T[] {
-  const [values, setValues] = useState<T[]>([]);
+export function useFirebaseDatabaseValues<T>(path: string): WithId<T>[] {
+  const [values, setValues] = useState<WithId<T>[]>([]);
 
   useEffect(() => {
     const reference = ref(database, path);
@@ -41,34 +40,73 @@ export function useFirebaseDatabaseValues<T extends { id: string }>(
 }
 
 /**
- * Custom hook to fetch and subscribe to values from a Firebase Realtime Database path in real-time.
+ * Custom hook to fetch and subscribe to values from a Firebase Realtime Database path.
  *
- * @template T - The type of the values being fetched. Must extend an object with an `id` property.
- * @param {string} path - The path in the Firebase Realtime Database to fetch values from.
- * @returns {T[]} - An array of values fetched from the specified database path.
+ * @template T - The type of the values being fetched.
+ * @returns {WithId<T>[]} - An array of values with their IDs.
  *
  * @example
  * // Usage example:
- * const messages = useSubscribeToFirebaseDatabaseValues<Message>("messages/$roomId");
+ * const rooms = useSubscribeToFirebaseDatabaseValues<ChatRoom>("publicRooms");
  */
-export function useSubscribeToFirebaseDatabaseValues<T extends { id: string }>(
-  path: string,
-): T[] {
-  const [values, setValues] = useState<T[]>([]);
+export function useSubscribeToFirebaseDatabaseValues<T>(params: {
+  path: string;
+  sortFn?: (a: WithId<T>, b: WithId<T>) => number;
+  onError?: (error: Error) => void;
+}): WithId<T>[] {
+  const [values, setValues] = useState<WithId<T>[]>([]);
 
   useEffect(() => {
+    const { path, sortFn, onError } = params;
     const callback = (snapshot: DataSnapshot) => {
       const snapshotArray = snapshotToArray<T>(snapshot);
+      if (sortFn) {
+        snapshotArray.sort(sortFn);
+      }
       setValues(snapshotArray);
     };
 
     const reference = ref(database, path);
-    onValue(reference, callback);
+    onValue(reference, callback, (error) => {
+      console.error("Error fetching data: ", error);
+      onError?.(error);
+    });
 
     return () => {
       off(reference, "value", callback);
     };
-  }, [path]);
+  }, [params]);
 
   return values;
+}
+
+/**
+ * Writes data to a specified path in the Firebase Realtime Database.
+ *
+ * @template T - The type of the data being written.
+ * @param {string} path - The path in the Firebase Realtime Database where the data should be written.
+ * @param {T} data - The data to write to the specified path.
+ * @param insert - Whether to insert a new item or update an existing one.
+ * @returns {Promise<void>} - A promise that resolves when the data has been written.
+ *
+ * @example
+ * // Usage example:
+ * writeToFirebaseDatabase("users/user1", { name: "John Doe", age: 30 });
+ */
+export async function writeToFirebaseDatabase<T>(
+  path: string,
+  data: T,
+  insert?: boolean,
+) {
+  let fullPath = path;
+  if (insert) {
+    fullPath = `${path}/${v4()}`;
+  }
+  try {
+    console.log("Writing document to: ", fullPath, data);
+
+    await set(ref(database, fullPath), data);
+  } catch (error) {
+    console.error("Error writing document: ", error);
+  }
 }

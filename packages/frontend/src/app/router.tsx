@@ -6,6 +6,7 @@ import ProtectedRoute from "@/app/components/protected-route.tsx";
 import { useFirebaseAuth } from "@/lib/firebase/auth.tsx";
 import ChatLayout from "@/features/chat/chat.layout.tsx";
 import PublicChatRoomPage from "@/features/chat/pages/public-chat-room.page.tsx";
+import NotFoundPage from "@/features/error/not-found.page.tsx";
 
 function Router() {
   const { isAuthenticated, hasAuthLoaded } = useFirebaseAuth();
@@ -26,6 +27,7 @@ function Router() {
             />
           </Route>
         </Route>
+        <Route path={routes["notFound"]} element={<NotFoundPage />} />
         <Route
           path="*"
           element={

@@ -1,14 +1,38 @@
 import ChatInput from "@/features/chat/components/chat.input.tsx";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ChatMessage from "@/features/chat/components/chat.message.tsx";
-import { useSubscribeToFirebaseDatabaseValues } from "@/lib/firebase/database.ts";
-import { Message } from "@/features/chat/chat.types.ts";
+import {
+  useSubscribeToFirebaseDatabaseValues,
+  writeToFirebaseDatabase,
+} from "@/lib/firebase/database.ts";
+
+import type { ChatMessage as ChatMessageType } from "@/lib/firebase/types.ts";
+import { useFirebaseAuth } from "@/lib/firebase/auth.tsx";
+import { routePaths } from "@/app/routes.ts";
 
 function PublicChatRoomPage() {
+  const { authUser } = useFirebaseAuth();
   const params = useParams<{ roomId: string }>();
-  const chatMessages = useSubscribeToFirebaseDatabaseValues<Message>(
-    `messages/${params.roomId!}`,
-  );
+  const navigate = useNavigate();
+  const chatMessages = useSubscribeToFirebaseDatabaseValues<ChatMessageType>({
+    path: `messages/${params.roomId!}`,
+    sortFn: (a, b) => a.createdAt - b.createdAt,
+    onError: () => {
+      navigate(routePaths.notFound());
+    },
+  });
+
+  async function sendMessage(content: string) {
+    await writeToFirebaseDatabase<ChatMessageType>(
+      `messages/${params.roomId!}`,
+      {
+        content,
+        createdBy: authUser!.uid,
+        createdAt: Date.now(),
+      },
+      true,
+    );
+  }
 
   return (
     <div className="flex w-full h-full flex-col gap-2 p-2">
@@ -18,7 +42,7 @@ function PublicChatRoomPage() {
         ))}
       </div>
       <div className="rounded h-1/4 mb-4">
-        <ChatInput sendMessage={() => {}} />
+        <ChatInput sendMessage={sendMessage} />
       </div>
     </div>
   );

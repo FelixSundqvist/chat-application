@@ -5,13 +5,8 @@ import {
   signInWithPopup,
   type User,
 } from "firebase/auth";
-import {
-  createContext,
-  PropsWithChildren,
-  use,
-  useEffect,
-  useState,
-} from "react";
+import type { PropsWithChildren } from "react";
+import { createContext, use, useEffect, useState } from "react";
 
 export function signInWithGoogle() {
   const provider = new GoogleAuthProvider();

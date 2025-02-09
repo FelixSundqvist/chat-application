@@ -11,8 +11,8 @@ import { Button } from "@/components/ui/button.tsx";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { routePaths } from "@/app/routes.ts";
 import { useFirebaseDatabaseValues } from "@/lib/firebase/database.ts";
-import { ChatRoom } from "@/features/chat/chat.types.ts";
 import { signOut } from "@/lib/firebase/auth.tsx";
+import type { ChatRoom } from "@/lib/firebase/types.ts";
 
 function ChatLayout() {
   const publicRooms = useFirebaseDatabaseValues<ChatRoom>("publicRooms");
