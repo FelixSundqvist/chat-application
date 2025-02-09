@@ -1,7 +1,7 @@
-import ChatInput from "@/features/chat/components/chat.input.tsx";
+import ChatInput from "@/features/chat/components/chat-input.tsx";
 
 import { useNavigate, useParams } from "react-router-dom";
-import ChatMessage from "@/features/chat/components/chat.message.tsx";
+import ChatMessage from "@/features/chat/components/chat-message.tsx";
 import {
   useSubscribeToFirebaseDatabaseValues,
   writeToFirebaseDatabase,

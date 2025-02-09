@@ -12,12 +12,16 @@ export const fetchUserPrivateRooms = onCall(async (request, response) => {
 
   const userRoomsRef = admin.database().ref(`userRooms/${userId}`);
   const snapshot = await userRoomsRef.once("value");
-  const roomIdRecord: Record<string, boolean> = snapshot.val();
+
+  const roomIdRecord: Record<string, boolean> | undefined = snapshot.val();
+
+  if (!roomIdRecord) {
+    return [];
+  }
+
   const roomIds = Object.entries(roomIdRecord)
     .filter(([, value]) => value)
     .map(([key]) => key);
-
-  logger.info("Fetched user private rooms", { roomIds });
 
   if (!roomIds) {
     return [];
