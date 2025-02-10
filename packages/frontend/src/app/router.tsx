@@ -8,7 +8,6 @@ import ChatRoomPage from "@/features/chat/chat-room.page.tsx";
 import NotFoundPage from "@/features/error/not-found.page.tsx";
 import { getFirebaseDatabaseValues } from "@/lib/firebase/database.ts";
 import { auth } from "@/config/firebase.ts";
-import { getValuesFromFunction } from "@/lib/firebase/functions.ts";
 import RouteErrorBoundary from "@/features/error/components/route-error-boundary.tsx";
 
 export const router = createBrowserRouter([
@@ -33,13 +32,13 @@ export const router = createBrowserRouter([
           {
             path: routes.chat,
             loader: async () => {
-              const [publicRooms, privateRooms] = await Promise.all([
+              const [publicRooms] = await Promise.all([
                 getFirebaseDatabaseValues("publicRooms"),
-                getValuesFromFunction("fetchUserPrivateRooms"),
+                // getValuesFromFunction("fetchUserPrivateRooms"),
               ]);
               return {
                 publicRooms,
-                privateRooms,
+                privateRooms: [],
               };
             },
             element: <ChatLayout />,

@@ -20,7 +20,11 @@ function SignInPage() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-4">
-            <Button className="w-full rounded-xl" onClick={signInWithGoogle}>
+            <Button
+              className="w-full rounded-xl"
+              onClick={signInWithGoogle}
+              variant="outline"
+            >
               Sign in with Google
             </Button>
           </div>

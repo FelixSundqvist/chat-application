@@ -1,6 +1,6 @@
 import type { DataSnapshot } from "firebase/database";
 import { get, off, onValue, ref, set } from "firebase/database";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { database } from "@/config/firebase.ts";
 import type { WithId } from "@shared/types";
 import { v4 } from "uuid";
@@ -40,9 +40,10 @@ export function useSubscribeToFirebaseDatabaseValues<T>(params: {
   onError?: (error: Error) => void;
 }): WithId<T>[] {
   const [values, setValues] = useState<WithId<T>[]>([]);
+  const paramsRef = useRef(params);
 
   useEffect(() => {
-    const { path, sortFn, onError } = params;
+    const { path, sortFn, onError } = paramsRef.current;
     const callback = (snapshot: DataSnapshot) => {
       const snapshotArray = snapshotToArray<T>(snapshot);
       if (sortFn) {
@@ -60,7 +61,7 @@ export function useSubscribeToFirebaseDatabaseValues<T>(params: {
     return () => {
       off(reference, "value", callback);
     };
-  }, [params]);
+  }, []);
 
   return useMemo(() => values, [values]);
 }

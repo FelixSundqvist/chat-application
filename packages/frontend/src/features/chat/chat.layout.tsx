@@ -55,7 +55,9 @@ function ChatLayout() {
             </SidebarGroup>
           </SidebarContent>
           <SidebarFooter>
-            <Button onClick={signOut}>Sign out</Button>
+            <Button onClick={signOut} variant="ghost">
+              Sign out
+            </Button>
           </SidebarFooter>
         </Sidebar>
         {location.pathname === routePaths.chat() ? <SelectRoom /> : <Outlet />}

@@ -4,9 +4,9 @@ import { useFirebaseAuth } from "@/lib/firebase/auth";
 import type { ChatMessage as ChatMessageType, WithId } from "@shared/types";
 
 const timeFormatter = new Intl.DateTimeFormat(["en", "fi"], {
-  dateStyle: "short",
   timeStyle: "short",
 });
+
 function ChatMessage({ message }: { message: WithId<ChatMessageType> }) {
   const { authUser } = useFirebaseAuth();
 
@@ -18,24 +18,21 @@ function ChatMessage({ message }: { message: WithId<ChatMessageType> }) {
     <div
       key={message.id}
       className={cn(
-        "p-2 rounded-xl max-w-[50%] min-w-[25%] relative m-2 w-fit",
+        "p-2 rounded-xl max-w-[50%] min-w-[25%] relative m-2 w-fit flex flex-col",
         isSentByMe
-          ? "bg-accent bg-gray-600 self-end rounded-br-none text-gray-100"
-          : "bg-gray-300 rounded-bl-none  text-gray-900",
+          ? "bg-accent rounded-br-none text-gray-100 bg-gradient-to-r from-blue-400 to-blue-500 text-right self-end"
+          : "rounded-bl-none bg-gray-200 text-gray-800 text-left",
       )}
     >
       <span
         className={cn(
-          "absolute top-0 text-xs -translate-y-full text-gray-300",
-          {
-            "left-0": !isSentByMe,
-            "right-0": isSentByMe,
-          },
+          "text-xs",
+          isSentByMe ? "text-gray-100" : "text-gray-500",
         )}
       >
         {createdAt}
       </span>
-      {message.content}
+      <span>{message.content}</span>
     </div>
   );
 }
