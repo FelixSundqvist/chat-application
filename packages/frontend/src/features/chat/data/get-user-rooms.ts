@@ -5,7 +5,7 @@ import {
   getDocValues,
   snapshotToArray,
 } from "@/lib/firebase/firestore.ts";
-import type { PrivateChatRoom, UserRooms } from "@/features/chat/chat.types.ts";
+import type { PrivateRoom, UserRooms } from "@/features/chat/chat.types.ts";
 import { getDocs, query, where } from "firebase/firestore";
 
 export const getUserRooms = async () => {
@@ -15,12 +15,14 @@ export const getUserRooms = async () => {
     `userRooms/${auth.currentUser?.uid}`,
   );
   const rooms = userRooms?.rooms ?? [];
-  let privateRooms: PrivateChatRoom[] = [];
+
+  let privateRooms: PrivateRoom[] = [];
+
   if (rooms.length > 0) {
     const privateRoomsRef = await getDocs(
       query(createCollection("privateRooms"), where("__name__", "in", rooms)),
     );
-    privateRooms = snapshotToArray<PrivateChatRoom>(privateRoomsRef);
+    privateRooms = snapshotToArray<PrivateRoom>(privateRoomsRef);
   }
   return {
     publicRooms,

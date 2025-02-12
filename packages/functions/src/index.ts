@@ -54,12 +54,13 @@ export const sendMessage = onCall<{
 });
 
 export const addUserToFirestore = auth.user().onCreate(async (user) => {
-  const { uid, email, displayName } = user;
+  const { uid, email, displayName, photoURL } = user;
   const userRef = db.collection("users").doc(uid);
   await userRef.set({
     email,
     displayName,
     createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    photoURL,
   });
   const userRoomsRef = db.collection("userRooms").doc(uid);
   await userRoomsRef.set({

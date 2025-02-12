@@ -1,5 +1,6 @@
 import type {
   DocumentData,
+  FirestoreError,
   QueryConstraint,
   QuerySnapshot,
 } from "firebase/firestore";
@@ -13,7 +14,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/config/firebase.ts";
 import type { WithId } from "@/lib/firebase/types.ts";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLatestValue } from "@/lib/utils.ts";
 import Logger from "@/lib/logger.ts";
 
@@ -26,6 +27,16 @@ export function snapshotToArray<T>(
     data.push({ id: doc.id, ...(doc.data() as T) });
   });
 
+  return data;
+}
+
+export function snapshotToIdObject<T>(
+  snapshot: QuerySnapshot<DocumentData, DocumentData>,
+) {
+  const data: Record<string, T> = {};
+  snapshot.forEach((doc) => {
+    data[doc.id] = doc.data() as T;
+  });
   return data;
 }
 
@@ -58,38 +69,33 @@ export async function getDocValues<T>(
 
 export function useSubscribeToFirestoreCollection<TCollectionValue>({
   name,
-  ...args
+  queryConstraints = [],
 }: {
   name: string;
-  onError?: (error: Error) => void;
   queryConstraints?: QueryConstraint[];
-  onUpdated?: (data: WithId<TCollectionValue>[]) => void;
 }) {
   const [data, setData] = useState<WithId<TCollectionValue>[]>([]);
-  const staticArgs = useLatestValue({
-    onError: args.onError,
-    onUpdated: args.onUpdated,
-    queryConstraints: args.queryConstraints,
-  });
+
+  const latestQueryConstrains = useLatestValue(queryConstraints);
+  const onError = useCallback((error: FirestoreError) => {
+    Logger.error("Error fetching data", error);
+  }, []);
 
   useEffect(() => {
-    const { onError, queryConstraints = [] } = staticArgs.current;
-
     const unsubscribe = onSnapshot(
-      query(createCollection(name), ...queryConstraints),
+      query(createCollection(name), ...latestQueryConstrains.current),
       (snapshot) => {
         setData(snapshotToArray<TCollectionValue>(snapshot));
       },
       (error) => {
         Logger.error("Error fetching data", error);
-        onError?.(error);
+        onError(error);
       },
     );
 
     return () => {
       unsubscribe();
     };
-  }, [name, staticArgs]);
-
+  }, [name, latestQueryConstrains, onError]);
   return data;
 }

@@ -7,10 +7,14 @@ service cloud.firestore {
       return request.auth.uid != null;
     }
 
+    function isCurrentUser(userId) {
+      return request.auth.uid == userId;
+    }
+
     function isInRoom(roomId) {
       return isAuth() && (
         exists(/databases/$(database)/documents/publicRooms/$(roomId)) ||
-        roomId in get(/databases/$(database)/documents/userRooms/$(request.auth.uid)).data.rooms
+          roomId in get(/databases/$(database)/documents/userRooms/$(request.auth.uid)).data.rooms
       );
     }
 
@@ -33,7 +37,7 @@ service cloud.firestore {
     }
 
     match /userRooms/{userId} {
-      allow read: if request.auth.uid == userId;
+      allow read: if isCurrentUser(userId);
     }
 
     match /roomMessages/{roomId} {
@@ -46,9 +50,11 @@ service cloud.firestore {
       allow read: if isInRoom(roomId);
     }
 
-    match /users/{userId}/email {
-      allow read: if request.auth.uid == userId;
-      allow write: if request.auth.uid == userId;
+    match /users/{userId} {
+      allow read: if isAuth();
+      match /email {
+        allow read: if isCurrentUser(userId);
+      }
     }
   }
 }

@@ -12,15 +12,13 @@ import { Link, Outlet, useLoaderData, useLocation } from "react-router-dom";
 import { routePaths } from "@/app/routes.ts";
 import { signOut } from "@/lib/firebase/auth.tsx";
 import type { WithId } from "@/lib/firebase/types.ts";
-import type {
-  PrivateChatRoom,
-  PublicChatRoom,
-} from "@/features/chat/chat.types.ts";
+import type { PrivateRoom, PublicRoom } from "@/features/chat/chat.types.ts";
+import { SelectRoom } from "@/features/chat/components/chat.select-room.tsx";
 
 function ChatLayout() {
   const { publicRooms, privateRooms } = useLoaderData<{
-    publicRooms: WithId<PublicChatRoom>[];
-    privateRooms: WithId<PrivateChatRoom>[];
+    publicRooms: WithId<PublicRoom>[];
+    privateRooms: WithId<PrivateRoom>[];
   }>();
 
   const location = useLocation();
@@ -67,15 +65,6 @@ function ChatLayout() {
         {location.pathname === routePaths.chat() ? <SelectRoom /> : <Outlet />}
       </Page>
     </SidebarProvider>
-  );
-}
-
-function SelectRoom() {
-  return (
-    <div className="flex flex-col items-center justify-center">
-      <h1>Welcome to the chat app!</h1>
-      <p>Select a room to start chatting.</p>
-    </div>
   );
 }
 

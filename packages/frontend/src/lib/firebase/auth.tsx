@@ -8,6 +8,7 @@ import {
 import type { PropsWithChildren } from "react";
 import { createContext, use, useEffect, useState } from "react";
 import { redirect } from "react-router-dom";
+import Logger from "@/lib/logger.ts";
 
 export function signInWithGoogle() {
   const provider = new GoogleAuthProvider();
@@ -15,8 +16,12 @@ export function signInWithGoogle() {
 }
 
 export async function signOut() {
-  await auth.signOut();
-  redirect("/");
+  try {
+    await auth.signOut();
+    redirect("/");
+  } catch (error) {
+    Logger.log(error);
+  }
 }
 
 type AuthContextType = {

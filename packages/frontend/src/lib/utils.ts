@@ -6,6 +6,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function uniqueArray<T>(array: T[]) {
+  return [...new Set(array)];
+}
+
 export function useLatestValue<T>(value: T) {
   const ref = useRef(value);
   ref.current = value;
@@ -13,13 +17,11 @@ export function useLatestValue<T>(value: T) {
 }
 
 export function useLatestFn<
-  TArgs,
-  TReturn,
-  TFunction extends (...args: TArgs[]) => TReturn,
->(fn: TFunction) {
+  TFunction extends (...args: Parameters<TFunction>) => ReturnType<TFunction>,
+>(fn: TFunction): TFunction {
   const ref = useRef(fn);
   ref.current = fn;
-  return ref;
+  return ref.current;
 }
 
 export default function usePrevious<T>(state: T): T | undefined {

@@ -24,6 +24,7 @@ function ChatInput({
     >
       <div className="relative w-full h-full">
         <textarea
+          aria-label={"Send message"}
           className="h-full w-full p-2 bg-gray-200 focus:outline-gray-200 rounded-xl"
           placeholder="Send message"
           value={message}
