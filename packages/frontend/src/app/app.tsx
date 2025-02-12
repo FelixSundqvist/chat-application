@@ -6,6 +6,7 @@ import ErrorBoundary from "@/features/error/components/error-boundary.tsx";
 import { Suspense } from "react";
 import { Spinner } from "@/components/spinner.tsx";
 import GenericError from "@/features/error/components/generic-error.tsx";
+import { Toaster } from "sonner";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           }
         >
           <RouterProvider router={router} />
+          <Toaster />
         </Suspense>
       </FirebaseAuthProvider>
     </ErrorBoundary>

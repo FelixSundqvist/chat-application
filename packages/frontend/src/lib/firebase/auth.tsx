@@ -9,6 +9,7 @@ import type { PropsWithChildren } from "react";
 import { createContext, use, useEffect, useState } from "react";
 import { redirect } from "react-router-dom";
 import Logger from "@/lib/logger.ts";
+import { routes } from "@/app/routes.ts";
 
 export function signInWithGoogle() {
   const provider = new GoogleAuthProvider();
@@ -18,7 +19,7 @@ export function signInWithGoogle() {
 export async function signOut() {
   try {
     await auth.signOut();
-    redirect("/");
+    redirect(routes.signIn);
   } catch (error) {
     Logger.log(error);
   }

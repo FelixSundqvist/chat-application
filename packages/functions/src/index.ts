@@ -1,12 +1,11 @@
 import * as admin from "firebase-admin";
 import { auth } from "firebase-functions/v1";
-import { onCall } from "firebase-functions/https";
+import { HttpsError, onCall } from "firebase-functions/https";
 import { onCallAuthGuard } from "./utils/auth-guard.js";
-import sanitizeHtml from "sanitize-html";
-
-admin.initializeApp();
-
-const db = admin.firestore();
+import validator from "validator";
+import { sanitize } from "./utils/sanitize";
+import { createChatRoomAndAddUsers } from "./utils/create-chat-room-and-add-users";
+import { db } from "./config";
 
 export const sendMessage = onCall<{
   roomId: string;
@@ -15,10 +14,7 @@ export const sendMessage = onCall<{
   const userId = await onCallAuthGuard(request);
   const { roomId, content } = request.data;
 
-  const sanitizedContent = sanitizeHtml(content, {
-    allowedTags: [],
-    allowedAttributes: {},
-  });
+  const sanitizedContent = sanitize(content);
 
   const messageRef = db
     .collection("roomMessages")
@@ -49,8 +45,27 @@ export const sendMessage = onCall<{
       });
     }
   }
+});
 
-  // Send notification
+export const createPrivateChatRoom = onCall<{
+  name: string;
+  invitedEmails: string[];
+}>(async (request, response) => {
+  const userId = await onCallAuthGuard(request);
+  const { invitedEmails, name } = request.data;
+  const sanitizedName = sanitize(name);
+
+  for (const email of invitedEmails) {
+    if (!validator.isEmail(email)) {
+      throw new HttpsError("invalid-argument", "Invalid email address.");
+    }
+  }
+
+  return createChatRoomAndAddUsers({
+    name: sanitizedName,
+    currentUserId: userId,
+    invitedEmails,
+  });
 });
 
 export const addUserToFirestore = auth.user().onCreate(async (user) => {

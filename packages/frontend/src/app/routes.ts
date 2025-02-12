@@ -1,5 +1,5 @@
 export const routes = {
-  signIn: "/sign-in",
+  signIn: "/",
   chat: "/chat",
   chatRoom: "/chat/:roomId",
   notFound: "/404",

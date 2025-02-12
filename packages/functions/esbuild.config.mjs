@@ -9,5 +9,10 @@ await esbuild.build({
   format: "cjs",
   outfile: "lib/index.js",
   sourcemap: true,
-  external: ["firebase-admin", "firebase-functions", "sanitize-html"],
+  external: [
+    "firebase-admin",
+    "firebase-functions",
+    "sanitize-html",
+    "validator",
+  ],
 });

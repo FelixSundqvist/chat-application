@@ -1,6 +1,5 @@
 import type {
   DocumentData,
-  FirestoreError,
   QueryConstraint,
   QuerySnapshot,
 } from "firebase/firestore";
@@ -14,9 +13,8 @@ import {
 } from "firebase/firestore";
 import { db } from "@/config/firebase.ts";
 import type { WithId } from "@/lib/firebase/types.ts";
-import { useCallback, useEffect, useState } from "react";
-import { useLatestValue } from "@/lib/utils.ts";
-import Logger from "@/lib/logger.ts";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export function snapshotToArray<T>(
   snapshot: QuerySnapshot<DocumentData, DocumentData>,
@@ -68,34 +66,66 @@ export async function getDocValues<T>(
 }
 
 export function useSubscribeToFirestoreCollection<TCollectionValue>({
-  name,
-  queryConstraints = [],
+  collectionPath,
+  queryConstraints,
+  disabled,
 }: {
-  name: string;
+  collectionPath: string;
   queryConstraints?: QueryConstraint[];
+  disabled?: boolean;
 }) {
   const [data, setData] = useState<WithId<TCollectionValue>[]>([]);
-
-  const latestQueryConstrains = useLatestValue(queryConstraints);
-  const onError = useCallback((error: FirestoreError) => {
-    Logger.error("Error fetching data", error);
-  }, []);
-
   useEffect(() => {
+    if (disabled) {
+      return;
+    }
+
+    const constraints = queryConstraints ?? [];
+
     const unsubscribe = onSnapshot(
-      query(createCollection(name), ...latestQueryConstrains.current),
+      query(createCollection(collectionPath), ...constraints),
       (snapshot) => {
         setData(snapshotToArray<TCollectionValue>(snapshot));
       },
       (error) => {
-        Logger.error("Error fetching data", error);
-        onError(error);
+        toast.error("Error fetching data - \n\n" + error);
       },
     );
 
     return () => {
       unsubscribe();
     };
-  }, [name, latestQueryConstrains, onError]);
+  }, [collectionPath, disabled, queryConstraints]);
+
+  return data;
+}
+
+export function useSubscribeToFirestoreDoc<TDocValue>({
+  docPath,
+}: {
+  docPath: string;
+}) {
+  const [data, setData] = useState<TDocValue | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      doc(db, docPath), // Create the Firestore document reference
+      (docSnapshot) => {
+        if (docSnapshot.exists()) {
+          setData({ id: docSnapshot.id, ...(docSnapshot.data() as TDocValue) });
+        } else {
+          setData(null);
+        }
+      },
+      (error) => {
+        toast.error("Error fetching document - \n\n" + error.message);
+      },
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, [docPath]);
+
   return data;
 }

@@ -1,18 +1,21 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import PublicRoute from "@/app/components/public-route.tsx";
 import { routes } from "@/app/routes.ts";
 import SignInPage from "@/features/sign-in/sign-in.page.tsx";
-import ProtectedRoute from "@/app/components/protected-route.tsx";
 import ChatLayout from "@/features/chat/chat.layout.tsx";
 import ChatRoomPage from "@/features/chat/chat-room.page.tsx";
 import NotFoundPage from "@/features/error/not-found.page.tsx";
 import { auth } from "@/config/firebase.ts";
 import RouteErrorBoundary from "@/features/error/components/route-error-boundary.tsx";
-import { getUserRooms } from "@/features/chat/data/get-user-rooms.ts";
+import PublicRoute from "@/app/components/public-route.tsx";
+import ProtectedRoute from "@/app/components/protected-route.tsx";
+import { SelectRoom } from "@/features/chat/components/chat.select-room.tsx";
 
 export const router = createBrowserRouter([
   {
     errorElement: <RouteErrorBoundary />,
+    loader: async () => {
+      await auth.authStateReady();
+    },
     children: [
       {
         element: <PublicRoute />,
@@ -25,20 +28,15 @@ export const router = createBrowserRouter([
       },
       {
         element: <ProtectedRoute />,
-        loader: async () => {
-          await auth.authStateReady();
-
-          const userId = auth.currentUser?.uid;
-          if (!userId) {
-            window.location.pathname = routes.signIn;
-          }
-        },
         children: [
           {
             path: routes.chat,
-            loader: getUserRooms,
             element: <ChatLayout />,
             children: [
+              {
+                index: true,
+                element: <SelectRoom />,
+              },
               {
                 path: routes.chatRoom,
                 element: <ChatRoomPage />,
@@ -53,7 +51,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "*",
-        element: <Navigate to={routes.signIn} />,
+        element: <Navigate to={routes.notFound} />,
       },
     ],
   },

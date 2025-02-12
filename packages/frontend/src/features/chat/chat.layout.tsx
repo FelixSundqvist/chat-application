@@ -8,20 +8,39 @@ import {
   SidebarProvider,
 } from "@/components/sidebar.tsx";
 import { Button } from "@/components/button.tsx";
-import { Link, Outlet, useLoaderData, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import { routePaths } from "@/app/routes.ts";
-import { signOut } from "@/lib/firebase/auth.tsx";
-import type { WithId } from "@/lib/firebase/types.ts";
-import type { PrivateRoom, PublicRoom } from "@/features/chat/chat.types.ts";
+import { signOut, useFirebaseAuth } from "@/lib/firebase/auth.tsx";
 import { SelectRoom } from "@/features/chat/components/chat.select-room.tsx";
+import CreateChatRoomDialog from "@/features/chat/components/chat.create-room.dialog.tsx";
+import {
+  useSubscribeToFirestoreCollection,
+  useSubscribeToFirestoreDoc,
+} from "@/lib/firebase/firestore";
+import type { PrivateRoom, PublicRoom, UserRooms } from "./chat.types";
+import { where } from "firebase/firestore";
+import { useMemo } from "react";
 
 function ChatLayout() {
-  const { publicRooms, privateRooms } = useLoaderData<{
-    publicRooms: WithId<PublicRoom>[];
-    privateRooms: WithId<PrivateRoom>[];
-  }>();
-
+  const { authUser } = useFirebaseAuth();
   const location = useLocation();
+
+  const publicRooms = useSubscribeToFirestoreCollection<PublicRoom>({
+    collectionPath: `publicRooms/`,
+  });
+
+  const userRooms = useSubscribeToFirestoreDoc<UserRooms>({
+    docPath: `userRooms/${authUser?.uid}`,
+  });
+
+  const privateRooms = useSubscribeToFirestoreCollection<PrivateRoom>({
+    collectionPath: `privateRooms/`,
+    queryConstraints: useMemo(
+      () => [where("__name__", "in", userRooms?.rooms ?? [])],
+      [userRooms?.rooms],
+    ),
+    disabled: (userRooms?.rooms ?? []).length === 0,
+  });
 
   return (
     <SidebarProvider>
@@ -49,7 +68,7 @@ function ChatLayout() {
                 <Link
                   key={room.id}
                   to={routePaths.chatRoom(room.id)}
-                  className="block p-2 underline"
+                  className="p-2 underline inline-flex w-full"
                 >
                   {room.name}
                 </Link>
@@ -57,7 +76,8 @@ function ChatLayout() {
             </SidebarGroup>
           </SidebarContent>
           <SidebarFooter>
-            <Button onClick={signOut} variant="ghost">
+            <CreateChatRoomDialog />
+            <Button onClick={signOut} variant="outline">
               Sign out
             </Button>
           </SidebarFooter>
