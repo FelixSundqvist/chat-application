@@ -15,5 +15,6 @@
         "./src/*"
       ]
     }
-  }
+  },
+  "extends": ["../../tsconfig.base.json"]
 }
