@@ -38,3 +38,10 @@ typings/
 specs.md
 /tmp
 /out-tsc
+
+
+
+.nx/cache
+.nx/workspace-data
+vite.config.*.timestamp*
+vitest.config.*.timestamp*
