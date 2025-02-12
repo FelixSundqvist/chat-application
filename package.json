@@ -5,8 +5,8 @@
   "description": "",
   "private": true,
   "scripts": {
-    "build": "nx run frontend:build",
-    "lint": "nx run frontend:lint",
+    "build": "yarn nx run frontend:build",
+    "lint": "yarn nx run frontend:lint",
     "ci": "yarn install --no-immutable",
     "prepare": "husky",
     "emulators:start": "firebase emulators:start --import=./seed"
