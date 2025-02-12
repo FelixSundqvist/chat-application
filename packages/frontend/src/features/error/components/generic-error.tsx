@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button.tsx";
+import { Button } from "@/components/button.tsx";
 import { signOut } from "@/lib/firebase/auth.tsx";
 
 function GenericError() {

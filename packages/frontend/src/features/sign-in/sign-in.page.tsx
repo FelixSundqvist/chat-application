@@ -1,12 +1,12 @@
-import Page from "@/components/ui/page.tsx";
-import { Button } from "@/components/ui/button.tsx";
+import Page from "@/components/page.tsx";
+import { Button } from "@/components/button.tsx";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card.tsx";
+} from "@/components/card.tsx";
 
 import { signInWithGoogle } from "@/lib/firebase/auth.tsx";
 

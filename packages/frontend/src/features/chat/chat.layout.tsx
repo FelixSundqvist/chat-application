@@ -1,4 +1,4 @@
-import Page from "@/components/ui/page.tsx";
+import Page from "@/components/page.tsx";
 import {
   Sidebar,
   SidebarContent,
@@ -6,8 +6,8 @@ import {
   SidebarGroup,
   SidebarHeader,
   SidebarProvider,
-} from "@/components/ui/sidebar.tsx";
-import { Button } from "@/components/ui/button.tsx";
+} from "@/components/sidebar.tsx";
+import { Button } from "@/components/button.tsx";
 import { Link, Outlet, useLoaderData, useLocation } from "react-router-dom";
 import { routePaths } from "@/app/routes.ts";
 import { signOut } from "@/lib/firebase/auth.tsx";

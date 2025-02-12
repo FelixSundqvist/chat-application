@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button.tsx";
+import { Button } from "@/components/button.tsx";
 import { useState } from "react";
 import { SendHorizonal } from "lucide-react";
 

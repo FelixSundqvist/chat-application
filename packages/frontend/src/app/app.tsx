@@ -4,7 +4,7 @@ import { RouterProvider } from "react-router-dom";
 import { router } from "@/app/router.tsx";
 import ErrorBoundary from "@/features/error/components/error-boundary.tsx";
 import { Suspense } from "react";
-import { Spinner } from "@/components/ui/spinner.tsx";
+import { Spinner } from "@/components/spinner.tsx";
 import GenericError from "@/features/error/components/generic-error.tsx";
 
 function App() {

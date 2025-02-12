@@ -6,17 +6,17 @@ import { PanelLeft } from "lucide-react";
 
 import { useIsMobile } from "@/hooks/use-mobile.tsx";
 import { cn } from "@/lib/utils.ts";
-import { Button } from "@/components/ui/button.tsx";
-import { Input } from "@/components/ui/input.tsx";
-import { Separator } from "@/components/ui/separator.tsx";
-import { Sheet, SheetContent } from "@/components/ui/sheet.tsx";
-import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { Button } from "@/components/button.tsx";
+import { Input } from "@/components/input.tsx";
+import { Separator } from "@/components/separator.tsx";
+import { Sheet, SheetContent } from "@/components/sheet.tsx";
+import { Skeleton } from "@/components/skeleton.tsx";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip.tsx";
+} from "@/components/tooltip.tsx";
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
