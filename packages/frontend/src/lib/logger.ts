@@ -7,13 +7,13 @@ function envGuard(cb: () => void) {
 
 const Logger = {
   log: (...args: unknown[]) => {
-    envGuard(() => console.log(args));
+    envGuard(() => console.log(...args));
   },
   error: (...args: unknown[]) => {
-    envGuard(() => console.error(args));
+    envGuard(() => console.error(...args));
   },
   warn: (...args: unknown[]) => {
-    envGuard(() => console.warn(args));
+    envGuard(() => console.warn(...args));
   },
 };
 

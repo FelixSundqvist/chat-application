@@ -1,38 +1,68 @@
 import * as admin from "firebase-admin";
+import { auth } from "firebase-functions/v1";
 import { onCall } from "firebase-functions/https";
-import { logger } from "firebase-functions";
 import { onCallAuthGuard } from "./utils/auth-guard.js";
+import sanitizeHtml from "sanitize-html";
 
 admin.initializeApp();
 
-export const fetchUserPrivateRooms = onCall(async (request, response) => {
-  logger.info("Fetching user private rooms");
+const db = admin.firestore();
 
+export const sendMessage = onCall<{
+  roomId: string;
+  content: string;
+}>(async (request, response) => {
   const userId = await onCallAuthGuard(request);
+  const { roomId, content } = request.data;
 
-  const userRoomsRef = admin.database().ref(`userRooms/${userId}`);
-  const snapshot = await userRoomsRef.once("value");
+  const sanitizedContent = sanitizeHtml(content, {
+    allowedTags: [],
+    allowedAttributes: {},
+  });
 
-  const roomIdRecord: Record<string, boolean> | undefined = snapshot.val();
+  const messageRef = db
+    .collection("roomMessages")
+    .doc(roomId)
+    .collection("messages")
+    .doc();
 
-  if (!roomIdRecord) {
-    return [];
+  const timestamp = admin.firestore.FieldValue.serverTimestamp();
+
+  await messageRef.set({
+    content: sanitizedContent,
+    createdBy: userId,
+    createdAt: timestamp,
+  });
+
+  const publicRoom = db.collection("publicRooms").doc(roomId);
+  const publicRoomSnapshot = await publicRoom.get();
+  if (publicRoomSnapshot.exists) {
+    await publicRoom.update({
+      lastMessageAt: timestamp,
+    });
+  } else {
+    const privateRoom = db.collection("privateRooms").doc(roomId);
+    const privateRoomSnapshot = await privateRoom.get();
+    if (privateRoomSnapshot.exists) {
+      await privateRoom.update({
+        lastMessageAt: timestamp,
+      });
+    }
   }
 
-  const roomIds = Object.entries(roomIdRecord)
-    .filter(([, value]) => value)
-    .map(([key]) => key);
+  // Send notification
+});
 
-  if (!roomIds) {
-    return [];
-  }
-
-  const privateRoomsRef = admin.database().ref("privateRooms");
-  const privateRoomsSnapshot = await privateRoomsRef.once("value");
-  // FIXME: any
-  const privateRooms = privateRoomsSnapshot.val() as Record<string, any>;
-
-  return Object.entries(privateRooms)
-    .filter(([roomId]) => roomIds.includes(roomId))
-    .map(([roomId, room]) => ({ ...room, id: roomId }));
+export const addUserToFirestore = auth.user().onCreate(async (user) => {
+  const { uid, email, displayName } = user;
+  const userRef = db.collection("users").doc(uid);
+  await userRef.set({
+    email,
+    displayName,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  });
+  const userRoomsRef = db.collection("userRooms").doc(uid);
+  await userRoomsRef.set({
+    rooms: [],
+  });
 });

@@ -6,15 +6,12 @@ import ProtectedRoute from "@/app/components/protected-route.tsx";
 import ChatLayout from "@/features/chat/chat.layout.tsx";
 import ChatRoomPage from "@/features/chat/chat-room.page.tsx";
 import NotFoundPage from "@/features/error/not-found.page.tsx";
-import { getFirebaseDatabaseValues } from "@/lib/firebase/database.ts";
 import { auth } from "@/config/firebase.ts";
 import RouteErrorBoundary from "@/features/error/components/route-error-boundary.tsx";
+import { getUserRooms } from "@/features/chat/data/get-user-rooms.ts";
 
 export const router = createBrowserRouter([
   {
-    loader: async () => {
-      await auth.authStateReady();
-    },
     errorElement: <RouteErrorBoundary />,
     children: [
       {
@@ -28,19 +25,18 @@ export const router = createBrowserRouter([
       },
       {
         element: <ProtectedRoute />,
+        loader: async () => {
+          await auth.authStateReady();
+
+          const userId = auth.currentUser?.uid;
+          if (!userId) {
+            window.location.pathname = routes.signIn;
+          }
+        },
         children: [
           {
             path: routes.chat,
-            loader: async () => {
-              const [publicRooms] = await Promise.all([
-                getFirebaseDatabaseValues("publicRooms"),
-                // getValuesFromFunction("fetchUserPrivateRooms"),
-              ]);
-              return {
-                publicRooms,
-                privateRooms: [],
-              };
-            },
+            loader: getUserRooms,
             element: <ChatLayout />,
             children: [
               {

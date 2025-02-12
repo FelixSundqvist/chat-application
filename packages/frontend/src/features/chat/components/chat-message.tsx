@@ -1,18 +1,18 @@
 import { cn } from "@/lib/utils";
 import { useFirebaseAuth } from "@/lib/firebase/auth";
 
-import type { ChatMessage as ChatMessageType, WithId } from "@shared/types";
+import type { UiChatMessage } from "@/features/chat/chat.types.ts";
 
 const timeFormatter = new Intl.DateTimeFormat(["en", "fi"], {
   timeStyle: "short",
 });
 
-function ChatMessage({ message }: { message: WithId<ChatMessageType> }) {
+function ChatMessage({ message }: { message: UiChatMessage }) {
   const { authUser } = useFirebaseAuth();
 
   const isSentByMe = message.createdBy === authUser?.uid;
 
-  const createdAt = timeFormatter.format(message.createdAt);
+  const createdAt = timeFormatter.format(message.createdAtDate);
 
   return (
     <div

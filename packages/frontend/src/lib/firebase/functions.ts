@@ -1,12 +1,12 @@
 import { getFunctions, httpsCallable } from "firebase/functions";
-import type { WithId } from "@shared/types";
 
 const functions = getFunctions();
 
-export async function getValuesFromFunction<T>(
+export async function callFirebaseFunction<T, TData>(
   functionName: string,
-): Promise<WithId<T>[]> {
+  data: TData,
+) {
   const fn = httpsCallable(functions, functionName);
-  const result = await fn();
-  return result.data as WithId<T>[];
+  const result = await fn(data);
+  return result.data as T;
 }

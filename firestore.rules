@@ -1,0 +1,54 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuth() {
+      return request.auth.uid != null;
+    }
+
+    function isInRoom(roomId) {
+      return isAuth() && (
+        exists(/databases/$(database)/documents/publicRooms/$(roomId)) ||
+        roomId in get(/databases/$(database)/documents/userRooms/$(request.auth.uid)).data.rooms
+      );
+    }
+
+    function isCreator(createdBy) {
+      return isAuth() && request.auth.uid == createdBy;
+    }
+
+    function isNonEmptyString(value) {
+      return value is string && value.size() > 0;
+    }
+
+    match /publicRooms/{roomId} {
+      allow read: if isAuth();
+    }
+
+    match /privateRooms/{roomId} {
+      // if roomId in userRooms
+      allow read: if isInRoom(roomId);
+      allow update: if isCreator(resource.data.createdBy);
+    }
+
+    match /userRooms/{userId} {
+      allow read: if request.auth.uid == userId;
+    }
+
+    match /roomMessages/{roomId} {
+      match /messages/{message} {
+        allow read: if isInRoom(roomId);
+      }
+    }
+
+    match /messageSeenBy/{roomId}/{message} {
+      allow read: if isInRoom(roomId);
+    }
+
+    match /users/{userId}/email {
+      allow read: if request.auth.uid == userId;
+      allow write: if request.auth.uid == userId;
+    }
+  }
+}

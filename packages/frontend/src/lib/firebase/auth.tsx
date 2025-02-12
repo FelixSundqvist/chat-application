@@ -7,6 +7,7 @@ import {
 } from "firebase/auth";
 import type { PropsWithChildren } from "react";
 import { createContext, use, useEffect, useState } from "react";
+import { redirect } from "react-router-dom";
 
 export function signInWithGoogle() {
   const provider = new GoogleAuthProvider();
@@ -15,6 +16,7 @@ export function signInWithGoogle() {
 
 export async function signOut() {
   await auth.signOut();
+  redirect("/");
 }
 
 type AuthContextType = {

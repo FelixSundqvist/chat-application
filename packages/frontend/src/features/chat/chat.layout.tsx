@@ -11,7 +11,11 @@ import { Button } from "@/components/ui/button.tsx";
 import { Link, Outlet, useLoaderData, useLocation } from "react-router-dom";
 import { routePaths } from "@/app/routes.ts";
 import { signOut } from "@/lib/firebase/auth.tsx";
-import type { PrivateChatRoom, PublicChatRoom, WithId } from "@shared/types";
+import type { WithId } from "@/lib/firebase/types.ts";
+import type {
+  PrivateChatRoom,
+  PublicChatRoom,
+} from "@/features/chat/chat.types.ts";
 
 function ChatLayout() {
   const { publicRooms, privateRooms } = useLoaderData<{

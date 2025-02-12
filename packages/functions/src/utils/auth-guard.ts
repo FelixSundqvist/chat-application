@@ -12,7 +12,7 @@ async function onRequestAuthGuard(req: Request, res: Response) {
       "No ID token provided.",
     );
   }
-
+  
   try {
     return admin.auth().verifyIdToken(idToken);
   } catch (error) {
