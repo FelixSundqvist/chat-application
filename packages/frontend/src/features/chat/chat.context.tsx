@@ -4,7 +4,13 @@ import {
   useSubscribeToFirestoreCollection,
   useSubscribeToFirestoreDoc,
 } from "@/lib/firebase/firestore";
-import type { ChatMessage, ChatRoom, UserRooms } from "./chat.types";
+import type {
+  ChatMessage,
+  ChatRoom,
+  PrivateChatRoom,
+  PublicChatRoom,
+  UserRooms,
+} from "./chat.types";
 import { where } from "firebase/firestore";
 import { useFirebaseAuth } from "@/lib/firebase/auth";
 import { useParams } from "react-router-dom";
@@ -18,8 +24,12 @@ const useChatRoomsLogic = () => {
   const [latestMessageRecord, setLatestMessageRecord] =
     useState<Record<string, ChatMessage>>();
 
-  const publicRooms = useSubscribeToFirestoreCollection<ChatRoom>({
+  const publicRooms = useSubscribeToFirestoreCollection<
+    ChatRoom,
+    PublicChatRoom
+  >({
     collectionPath: `publicRooms/`,
+    valueTransformer: (values) => values.map((v) => ({ ...v, isPublic: true })),
   });
 
   const userRooms = useSubscribeToFirestoreDoc<UserRooms>({
@@ -28,7 +38,7 @@ const useChatRoomsLogic = () => {
 
   const privateRooms = useSubscribeToFirestoreCollection<
     ChatRoom,
-    ChatRoom & { hello: number }
+    PrivateChatRoom
   >({
     collectionPath: `privateRooms/`,
     queryConstraints: useMemo(
@@ -36,9 +46,8 @@ const useChatRoomsLogic = () => {
       [userRooms?.rooms],
     ),
     disabled: (userRooms?.rooms ?? []).length === 0,
-    valueTransformer: (values) => {
-      return values.map((v) => ({ ...v, hello: 1 }));
-    },
+    valueTransformer: (values) =>
+      values.map((v) => ({ ...v, isPublic: false })),
   });
 
   const currentRoom = useMemo(
@@ -46,17 +55,21 @@ const useChatRoomsLogic = () => {
     [privateRooms, publicRooms, roomId],
   );
 
+  const allRooms = useMemo(
+    () => [...privateRooms, ...publicRooms],
+    [privateRooms, publicRooms],
+  );
+
   useEffect(() => {
-    getRoomLatestMessages([...privateRooms, ...publicRooms]).then((results) => {
+    getRoomLatestMessages(allRooms).then((results) => {
       setLatestMessageRecord(
         arrayToRecord(results, "id", (r) => r.latestMessage),
       );
     });
-  }, [privateRooms, publicRooms]);
+  }, [allRooms]);
 
   return {
-    publicRooms,
-    privateRooms,
+    allRooms,
     currentRoom,
     latestMessageRecord,
   };

@@ -42,7 +42,7 @@ function ChatMessage({ message }: { message: ProcessedChatMessage }) {
     <div
       key={message.id}
       className={cn(
-        "p-2 rounded-xl max-w-[50%] min-w-[25%] flex-1 relative m-0.5 mb-5 flex flex-col gap-1",
+        "p-2 rounded-xl max-w-[50%] min-w-[30%] flex-1 relative m-0.5 mb-5 flex flex-col gap-1",
         styles.speechBubble,
       )}
     >

@@ -35,7 +35,7 @@ function ChatInput({
           aria-label={"Send message"}
           disabled={isSending}
           className={cn(
-            "h-full w-full p-2 bg-gray-200 focus:outline-gray-200 rounded-xl",
+            "h-full w-full p-2 bg-gray-200 focus:outline-gray-200 rounded-xl dark:bg-gray-600 dark:focus:outline-gray-800 dark:text-gray-200",
             isSending && "opacity-50",
           )}
           placeholder="Send message"

@@ -107,7 +107,9 @@ function CreateChatRoomDialog() {
   const [isOpen, setOpen] = useState(false);
   return (
     <Dialog open={isOpen} onOpenChange={setOpen}>
-      <DialogTrigger>+ Create new room</DialogTrigger>
+      <DialogTrigger className="truncate text-left font-semibold mt-2 p-2 text-sm">
+        + Create new room
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create new chat room</DialogTitle>

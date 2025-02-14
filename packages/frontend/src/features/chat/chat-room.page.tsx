@@ -33,9 +33,11 @@ function ChatRoomPage() {
   useScrollToLatestMessage(scrollRef, messages);
 
   return (
-    <div className="flex w-full h-full flex-col gap-2 p-2 overflow-hidden">
-      <h1 className="text-2xl">{currentRoom?.name}</h1>
-      <div className="flex-1 gap-2 flex flex-col p-2 overflow-y-auto">
+    <div className="flex w-full h-full flex-col p-2 overflow-hidden">
+      <h1 className="text-2xl dark:text-gray-200 border-b-2 border-gray-200 pb-2">
+        {currentRoom?.name}
+      </h1>
+      <div className="flex-1 gap-2 flex flex-col p-2 pt-4 overflow-y-auto">
         <Messages messages={formattedMessages} />
         <div ref={scrollRef} />
       </div>

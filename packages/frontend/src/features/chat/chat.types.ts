@@ -14,6 +14,16 @@ export interface ChatRoom {
   latestMessageRef?: DocumentReference<ChatMessage>;
 }
 
+export interface PublicChatRoom extends ChatRoom {
+  id: string;
+  isPublic: true;
+}
+
+export interface PrivateChatRoom extends ChatRoom {
+  id: string;
+  isPublic: false;
+}
+
 export interface UserRooms {
   rooms: string[];
 }

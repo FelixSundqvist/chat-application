@@ -1,5 +1,9 @@
 import type { WithId } from "@/lib/firebase/types.ts";
-import type { ChatMessage, ChatRoom } from "@/features/chat/chat.types.ts";
+import type {
+  ChatMessage,
+  PrivateChatRoom,
+  PublicChatRoom,
+} from "@/features/chat/chat.types.ts";
 import { Link } from "react-router-dom";
 import { routePaths } from "@/app/routes.ts";
 import { cn } from "@/lib/style.ts";
@@ -31,13 +35,13 @@ function formatSentAtTime(date: Date) {
   return dateFormatter.format(date);
 }
 
-export function ChatRoomLink<TRoom extends WithId<ChatRoom>>({
-  isPublic = false,
+export function ChatRoomLink<
+  TRoom extends WithId<PublicChatRoom | PrivateChatRoom>,
+>({
   room,
   isSelected,
   latestMessage,
 }: {
-  isPublic?: boolean;
   room: TRoom;
   isSelected: boolean;
   latestMessage?: ChatMessage;
@@ -45,8 +49,8 @@ export function ChatRoomLink<TRoom extends WithId<ChatRoom>>({
   return (
     <div
       className={cn(
-        "cursor-pointer p-1 my-1",
-        isSelected ? "bg-blue-100" : "hover:bg-gray-100  hover:text-blue-500",
+        "cursor-pointer p-1 my-1 rounded-xl",
+        isSelected ? "bg-blue-600" : "hover:bg-blue-400  hover:text-white",
       )}
     >
       <Link
@@ -55,13 +59,12 @@ export function ChatRoomLink<TRoom extends WithId<ChatRoom>>({
         className={cn("block pl-2 pb-1 font-light relative")}
       >
         <span>{room.name}</span>
-
-        {isPublic && (
-          <span className="absolute p-1 top-0 right-0 text-[0.5rem] font-semibold text-blue-500">
+        {room.isPublic && (
+          <span className="absolute p-1 top-0 right-0 text-[0.75rem] font-semibold text-blue-200">
             Public
           </span>
         )}
-        <span className="block pl-2 py-1 font-light text-sm text-muted-foreground">
+        <span className="block pl-2 py-1 font-light text-sm">
           {latestMessage !== undefined && (
             <span>
               {[
