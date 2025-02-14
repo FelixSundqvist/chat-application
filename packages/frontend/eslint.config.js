@@ -52,16 +52,10 @@ export default tseslint.config(
               from: "./src/features",
               except: ["./sign-in"],
             },
-            // Shared code can't import from features or app
             {
-              target: [
-                "./src/components",
-                "./src/hooks",
-                "./src/lib",
-                "./src/types",
-                "./src/utils",
-              ],
-              from: ["./src/features", "./src/app"],
+              target: "./src/features/error",
+              from: "./src/features",
+              except: ["./error"],
             },
           ],
         },

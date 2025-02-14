@@ -5,8 +5,8 @@
   "description": "",
   "private": true,
   "scripts": {
-    "build": "npx nx affected -t run build",
-    "lint": "npx nx affected -t run lint",
+    "build": "nx affected -t lint build",
+    "lint": "nx affected -t lint",
     "dev": "concurrently --kill-others-on-fail \"yarn emulators:start\" \"npx nx run frontend:dev\"",
     "ci": "yarn install --no-immutable",
     "prepare": "husky",
