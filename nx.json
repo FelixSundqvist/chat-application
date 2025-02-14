@@ -12,7 +12,7 @@
         "{projectRoot}/packages/frontend/dist",
         "{projectRoot}/packages/functions/lib"
       ],
-      "cache":true
+      "cache": true
     }
   },
   "defaultBase": "main",
@@ -39,5 +39,28 @@
       }
     }
   ],
-  "generators": {}
+  "generators": {},
+  "release": {
+    "projectsRelationship": "independent",
+    "projects": ["packages/*"],
+    "releaseTagPattern": "{projectName}/v{version}",
+    "conventionalCommits": {
+      "types": {
+        "chore": {
+          "changelog": false
+        }
+      }
+    },
+    "version": {
+      "conventionalCommits": true
+    },
+    "changelog": {
+      "projectChangelogs": true,
+      "createRelease": "github",
+      "file": "false"
+    },
+    "git": {
+      "commitMessage": "chore(release): {version}"
+    }
+  }
 }
