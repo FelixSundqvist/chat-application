@@ -55,12 +55,15 @@
       "conventionalCommits": true
     },
     "changelog": {
-      "projectChangelogs": true,
+      "projectChangelogs": false,
       "createRelease": "github",
       "file": "false"
     },
     "git": {
-      "commitMessage": "chore(release): {version}"
+      "tag": true,
+      "commit": true,
+      "stageChanges": true,
+      "commitMessage": "chore(release): ${version}"
     }
   }
 }
