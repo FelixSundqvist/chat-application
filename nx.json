@@ -2,16 +2,17 @@
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "targetDefaults": {
     "lint": {
-      "dependsOn": [
-        "^lint"
-      ],
       "cache": true
     },
     "build": {
-      "outputs": [
-        "{projectRoot}/packages/frontend/dist"
+      "dependsOn": [
+        "^lint"
       ],
-      "cache": true
+      "outputs": [
+        "{projectRoot}/packages/frontend/dist",
+        "{projectRoot}/packages/functions/lib"
+      ],
+      "cache":true
     }
   },
   "defaultBase": "main",
