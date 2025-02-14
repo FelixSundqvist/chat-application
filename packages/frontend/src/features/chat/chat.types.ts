@@ -1,5 +1,5 @@
 import type { WithId, WithJsDate } from "@/lib/firebase/types.ts";
-import type { Timestamp } from "firebase/firestore";
+import type { DocumentReference, Timestamp } from "firebase/firestore";
 
 export interface ChatMessage {
   content: string;
@@ -7,14 +7,11 @@ export interface ChatMessage {
   createdAt: Timestamp;
 }
 
-export interface PublicRoom {
-  name: string;
-}
-
-export interface PrivateRoom {
+export interface ChatRoom {
   name: string;
   createdBy: string;
   createdAt: Timestamp;
+  latestMessageRef?: DocumentReference<ChatMessage>;
 }
 
 export interface UserRooms {

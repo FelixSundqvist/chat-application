@@ -3,8 +3,8 @@ import {
   createCollection,
   snapshotToIdObject,
 } from "@/lib/firebase/firestore.ts";
-import { uniqueArray } from "@/lib/utils.ts";
 import type { User } from "@/features/chat/chat.types.ts";
+import { uniqueArray } from "@/lib/array.ts";
 
 async function getUsersByIds(userIds: string[]): Promise<Record<string, User>> {
   const uniqueIds = uniqueArray(userIds);

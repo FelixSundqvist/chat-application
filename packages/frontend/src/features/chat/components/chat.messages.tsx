@@ -6,7 +6,7 @@ export function Messages({ messages }: { messages: ChatMessageByDateTuple[] }) {
     return <h1 className="text-center font-semibold">No messages yet.</h1>;
 
   return messages.map(([date, messages]) => (
-    <div key={date} className="flex flex-col gap-2">
+    <div key={date} className="flex flex-col gap-2 w-full">
       <div className="text-center text-gray-500 text-xs">{date}</div>
       {messages.map((m) => (
         <ChatMessage key={m.id} message={m} />

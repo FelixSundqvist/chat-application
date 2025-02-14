@@ -32,18 +32,21 @@ export const sendMessage = onCall<{
 
   const publicRoom = db.collection("publicRooms").doc(roomId);
   const publicRoomSnapshot = await publicRoom.get();
+
+  const payload = {
+    latestMessageRef: messageRef,
+    updatedAt: timestamp,
+  };
+
   if (publicRoomSnapshot.exists) {
-    await publicRoom.update({
-      lastMessageAt: timestamp,
-    });
+    await publicRoom.update(payload);
   } else {
     const privateRoom = db.collection("privateRooms").doc(roomId);
     const privateRoomSnapshot = await privateRoom.get();
-    if (privateRoomSnapshot.exists) {
-      await privateRoom.update({
-        lastMessageAt: timestamp,
-      });
+    if (!privateRoomSnapshot.exists) {
+      throw new HttpsError("not-found", "Room not found.");
     }
+    await privateRoom.update(payload);
   }
 });
 

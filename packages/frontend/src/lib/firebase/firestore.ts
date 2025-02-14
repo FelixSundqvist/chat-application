@@ -13,7 +13,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/config/firebase.ts";
 import type { WithId } from "@/lib/firebase/types.ts";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 export function snapshotToArray<T>(
@@ -65,16 +65,48 @@ export async function getDocValues<T>(
   };
 }
 
-export function useSubscribeToFirestoreCollection<TCollectionValue>({
-  collectionPath,
-  queryConstraints,
-  disabled,
-}: {
+interface UseSubscribeToFirestoreArgs<
+  TCollectionValue,
+  TTransformedValue = TCollectionValue,
+> {
   collectionPath: string;
   queryConstraints?: QueryConstraint[];
   disabled?: boolean;
-}) {
-  const [data, setData] = useState<WithId<TCollectionValue>[]>([]);
+  onError?: (error: Error) => void;
+  valueTransformer?: (
+    values: WithId<TCollectionValue>[],
+  ) => WithId<TTransformedValue>[];
+}
+
+function useSubscribeToFirestoreCollection<TCollectionValue, TTransformedValue>(
+  args: UseSubscribeToFirestoreArgs<TCollectionValue, TTransformedValue> & {
+    valueTransformer: (
+      values: WithId<TCollectionValue>[],
+    ) => WithId<TTransformedValue>[];
+  },
+): WithId<TTransformedValue>[];
+function useSubscribeToFirestoreCollection<TCollectionValue>(
+  args: UseSubscribeToFirestoreArgs<TCollectionValue> & {
+    valueTransformer?: undefined;
+  },
+): WithId<TCollectionValue>[];
+function useSubscribeToFirestoreCollection<
+  TCollectionValue,
+  TTransformedValue = TCollectionValue,
+>({
+  collectionPath,
+  queryConstraints,
+  disabled,
+  onError,
+  valueTransformer,
+}: UseSubscribeToFirestoreArgs<TCollectionValue, TTransformedValue>) {
+  const [data, setData] = useState<
+    (TTransformedValue | WithId<TCollectionValue>)[]
+  >([]);
+
+  const valueTransformerRef = useRef(valueTransformer);
+  const onErrorRef = useRef(onError);
+
   useEffect(() => {
     if (disabled) {
       return;
@@ -85,20 +117,30 @@ export function useSubscribeToFirestoreCollection<TCollectionValue>({
     const unsubscribe = onSnapshot(
       query(createCollection(collectionPath), ...constraints),
       (snapshot) => {
-        setData(snapshotToArray<TCollectionValue>(snapshot));
+        const values = snapshotToArray<TCollectionValue>(snapshot);
+
+        if (valueTransformerRef.current) {
+          const transformed = valueTransformerRef.current(values);
+          setData(transformed);
+          return;
+        }
+
+        setData(values);
       },
       (error) => {
-        toast.error("Error fetching data - \n\n" + error);
+        onErrorRef.current?.(error);
       },
     );
 
     return () => {
       unsubscribe();
     };
-  }, [collectionPath, disabled, queryConstraints]);
+  }, [collectionPath, disabled, onErrorRef, queryConstraints]);
 
   return data;
 }
+
+export { useSubscribeToFirestoreCollection };
 
 export function useSubscribeToFirestoreDoc<TDocValue>({
   docPath,

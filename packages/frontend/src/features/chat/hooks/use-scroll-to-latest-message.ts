@@ -1,9 +1,9 @@
 import type { RefObject } from "react";
 import { useLayoutEffect } from "react";
-import usePrevious from "@/lib/utils.ts";
 import { useFirebaseAuth } from "@/lib/firebase/auth.tsx";
 
 import type { ChatMessage } from "@/features/chat/chat.types.ts";
+import usePrevious from "@/hooks/use-previous.ts";
 
 /**
  * Scrolls to the bottom of the chat after initial load
