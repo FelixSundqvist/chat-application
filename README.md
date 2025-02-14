@@ -1,6 +1,6 @@
 # Chat application
 
-![Release frontend](https://github.com/FelixSundqvist/chat-application/actions/workflows/release-frontend.yml/badge.svg)
+![Releases](https://github.com/FelixSundqvist/chat-application/actions/workflows/release.yml/badge.svg)
 
 
 ## Description

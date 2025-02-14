@@ -1,4 +1,4 @@
-name: Deploy to Firebase Hosting on merge
+name: Release
 on:
   release:
     types:
@@ -9,7 +9,6 @@ permissions:
   contents: read
 jobs:
   build_and_deploy:
-    if: startsWith(github.event.release.tag_name, 'frontend/v')
     runs-on: ubuntu-latest
     steps:
       - name: Proceed with release workflow
@@ -44,8 +43,8 @@ jobs:
           echo "BASE: ${{ env.NX_BASE }}"
           echo "HEAD: ${{ env.NX_HEAD }}"
 
-      - name: Run Lint and Build
-        run: npx nx run-many -t lint build -p frontend
+      - name: Run Nx commands
+        run: npx nx affected -t lint build
 
       - name: Deploy to Firebase hosting
         uses: FirebaseExtended/action-hosting-deploy@v0

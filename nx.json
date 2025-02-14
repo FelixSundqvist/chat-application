@@ -41,9 +41,10 @@
   ],
   "generators": {},
   "release": {
-    "projectsRelationship": "independent",
-    "projects": ["packages/*"],
-    "releaseTagPattern": "{projectName}/v{version}",
+    "projects": [
+      "packages/*"
+    ],
+    "releaseTagPattern": "release/v{version}",
     "conventionalCommits": {
       "types": {
         "chore": {
@@ -63,7 +64,7 @@
       "tag": true,
       "commit": true,
       "stageChanges": true,
-      "commitMessage": "chore(release): ${version}"
+      "commitMessage": "chore(release): {version}"
     }
   }
 }
