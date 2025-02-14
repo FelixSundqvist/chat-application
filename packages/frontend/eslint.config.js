@@ -24,11 +24,16 @@ export default tseslint.config(
     },
     settings: {
       "import/resolver": {
+        typescript: {
+          project: ["tsconfig.app.json"],
+          alwaysTryTypes: true,
+        },
+        node: {
+          project: ["tsconfig.node.json"],
+        },
         alias: {
           map: [["@/*", "./src/*"]],
         },
-        node: {},
-        typescript: {},
       },
     },
     rules: {
