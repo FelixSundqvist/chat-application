@@ -1,6 +1,7 @@
 import { Button } from "@/components/button.tsx";
 import { useState } from "react";
 import { SendHorizonal } from "lucide-react";
+import { cn } from "@/lib/style.ts";
 
 function ChatInput({
   sendMessage,
@@ -8,11 +9,14 @@ function ChatInput({
   sendMessage: (message: string) => Promise<void>;
 }) {
   const [message, setMessage] = useState("");
+  const [isSending, setIsSending] = useState(false);
 
   async function handleSendMessage() {
-    if (message.length === 0) return;
+    if (message.length === 0 || isSending) return;
+    setIsSending(true);
     await sendMessage(message);
     setMessage("");
+    setIsSending(false);
   }
 
   return (
@@ -29,7 +33,11 @@ function ChatInput({
         <textarea
           id="message"
           aria-label={"Send message"}
-          className="h-full w-full p-2 bg-gray-200 focus:outline-gray-200 rounded-xl"
+          disabled={isSending}
+          className={cn(
+            "h-full w-full p-2 bg-gray-200 focus:outline-gray-200 rounded-xl",
+            isSending && "opacity-50",
+          )}
           placeholder="Send message"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
@@ -43,7 +51,7 @@ function ChatInput({
         <Button
           type={"submit"}
           className="absolute bottom-2 right-2 rounded-xl hover:bg-inherit hover:text-gray-500"
-          disabled={message.length === 0}
+          disabled={message.length === 0 || isSending}
           variant="ghost"
         >
           <SendHorizonal size={24} />
