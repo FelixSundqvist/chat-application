@@ -1,9 +1,8 @@
-name: Release
+name: Release monorepo
 on:
   release:
     types:
       - published
-# Needed for nx-set-shas when run on the main branch
 permissions:
   actions: read
   contents: read
