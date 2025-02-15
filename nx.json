@@ -5,7 +5,7 @@
       "cache": true
     },
     "build": {
-      "dependsOn": ["^lint"],
+      "dependsOn": ["lint"],
       "outputs": [
         "{projectRoot}/packages/frontend/dist",
         "{projectRoot}/packages/functions/lib"
