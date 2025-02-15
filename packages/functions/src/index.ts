@@ -10,7 +10,7 @@ import { db } from "./config";
 export const sendMessage = onCall<{
   roomId: string;
   content: string;
-}>(async (request, response) => {
+}>({ enforceAppCheck: true }, async (request) => {
   const userId = await onCallAuthGuard(request);
   const { roomId, content } = request.data;
 
@@ -53,7 +53,7 @@ export const sendMessage = onCall<{
 export const createPrivateChatRoom = onCall<{
   name: string;
   invitedEmails: string[];
-}>(async (request, response) => {
+}>({ enforceAppCheck: true }, async (request, response) => {
   const userId = await onCallAuthGuard(request);
   const { invitedEmails, name } = request.data;
   const sanitizedName = sanitize(name);

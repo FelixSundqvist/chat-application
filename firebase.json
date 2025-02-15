@@ -13,7 +13,13 @@
     }
   ],
   "hosting": {
-    "public": "./packages/frontend/dist"
+    "public": "./packages/frontend/dist",
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
   },
   "emulators": {
     "auth": {
