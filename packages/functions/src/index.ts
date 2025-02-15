@@ -76,7 +76,7 @@ export const addUserToFirestore = auth.user().onCreate(async (user) => {
   const userRef = db.collection("users").doc(uid);
   await userRef.set({
     email,
-    displayName,
+    displayName: displayName ?? email,
     createdAt: admin.firestore.FieldValue.serverTimestamp(),
     photoURL,
   });
