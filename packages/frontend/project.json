@@ -1,0 +1,10 @@
+{
+  "targets": {
+    "build": {
+      "configurations": {
+        "development": {},
+        "production": {}
+      }
+    }
+  }
+}

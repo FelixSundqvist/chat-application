@@ -38,8 +38,14 @@ jobs:
           echo "BASE: ${{ env.NX_BASE }}"
           echo "HEAD: ${{ env.NX_HEAD }}"
 
+      - name: Create .env file
+        env:
+          PROD_FRONTEND_ENV: ${{ secrets.PROD_FRONTEND_ENV }}
+        run: |
+          echo $PROD_FRONTEND_ENV | base64 --decode > ./packages/frontend/.env.build.production
+
       - name: Run Nx commands
-        run: npx nx affected -t lint build
+        run: npx nx affected -t lint build --configuration production
 
       - name: Deploy to Firebase hosting
         uses: FirebaseExtended/action-hosting-deploy@v0

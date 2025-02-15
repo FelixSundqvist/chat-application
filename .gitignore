@@ -45,3 +45,5 @@ specs.md
 .nx/workspace-data
 vite.config.*.timestamp*
 vitest.config.*.timestamp*
+
+.env.*
