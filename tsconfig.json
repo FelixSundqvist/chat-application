@@ -10,18 +10,13 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "lib": [
-      "es2020"
-    ],
+    "lib": ["es2020"],
     "skipDefaultLibCheck": true,
     "skipLibCheck": true,
     "paths": {
-      "frontend": [
-        "packages/frontend/src/index.ts"
-      ]
+      "frontend": ["packages/frontend/src/index.ts"]
     }
   },
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"],
+  "references": []
 }
