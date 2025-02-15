@@ -3,7 +3,11 @@ import ChatMessage from "@/features/chat/components/chat.message.tsx";
 
 export function Messages({ messages }: { messages: ChatMessageByDateTuple[] }) {
   if (messages.length === 0)
-    return <h1 className="text-center font-semibold">No messages yet.</h1>;
+    return (
+      <h1 className="text-center font-semibold dark:text-gray-100">
+        No messages yet.
+      </h1>
+    );
 
   return messages.map(([date, messages]) => (
     <div key={date} className="flex flex-col gap-2 w-full">

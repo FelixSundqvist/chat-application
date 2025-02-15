@@ -2,6 +2,7 @@ import { Button } from "@/components/button.tsx";
 import { useState } from "react";
 import { SendHorizonal } from "lucide-react";
 import { cn } from "@/lib/style.ts";
+import { toast } from "sonner";
 
 function ChatInput({
   sendMessage,
@@ -14,9 +15,15 @@ function ChatInput({
   async function handleSendMessage() {
     if (message.length === 0 || isSending) return;
     setIsSending(true);
-    await sendMessage(message);
-    setMessage("");
-    setIsSending(false);
+
+    try {
+      await sendMessage(message);
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setMessage("");
+      setIsSending(false);
+    }
   }
 
   return (
