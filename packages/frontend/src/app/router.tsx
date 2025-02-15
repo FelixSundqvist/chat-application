@@ -9,6 +9,7 @@ import RouteErrorBoundary from "@/features/error/components/route-error-boundary
 import PublicRoute from "@/app/components/public-route.tsx";
 import ProtectedRoute from "@/app/components/protected-route.tsx";
 import { SelectRoom } from "@/features/chat/components/chat.select-room.tsx";
+import { signInWithEmail } from "@/lib/firebase/auth.tsx";
 
 export const router = createBrowserRouter([
   {
@@ -19,6 +20,7 @@ export const router = createBrowserRouter([
     children: [
       {
         element: <PublicRoute />,
+        loader: async () => signInWithEmail(),
         children: [
           {
             path: routes.signIn,
