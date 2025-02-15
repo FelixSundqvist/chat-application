@@ -45,7 +45,7 @@ jobs:
           echo $PROD_FRONTEND_ENV | base64 --decode > ./packages/frontend/.env.build.production
 
       - name: Run Nx commands
-        run: npx nx affected -t lint build --configuration production
+        run: npx nx run-many -t lint build
 
       - name: Deploy to Firebase hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
