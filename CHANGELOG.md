@@ -1,3 +1,13 @@
+## 0.1.1 (2025-02-15)
+
+### 🩹 Fixes
+
+- **frontend:** disable send while sending ([c00fc55](https://github.com/FelixSundqvist/chat-application/commit/c00fc55))
+
+### ❤️ Thank You
+
+- Felix Sundqvist @FelixSundqvist
+
 ## 0.1.0 (2025-02-14)
 
 ### 🚀 Features
