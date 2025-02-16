@@ -56,7 +56,7 @@
   "generators": {},
   "release": {
     "projects": [
-      "*"
+      "packages/*"
     ],
     "releaseTagPattern": "release/v{version}",
     "conventionalCommits": {
