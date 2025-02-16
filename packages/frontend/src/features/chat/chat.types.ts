@@ -5,6 +5,9 @@ export interface ChatMessage {
   content: string;
   createdBy: string;
   createdAt: Timestamp;
+  seenBy: {
+    [uid: string]: Timestamp;
+  };
 }
 
 export interface ChatRoom {

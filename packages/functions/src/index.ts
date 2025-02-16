@@ -28,6 +28,7 @@ export const sendMessage = onCall<{
     content: sanitizedContent,
     createdBy: userId,
     createdAt: timestamp,
+    seenBy: {},
   });
 
   const publicRoom = db.collection("publicRooms").doc(roomId);
@@ -69,6 +70,32 @@ export const createPrivateChatRoom = onCall<{
     currentUserId: userId,
     invitedEmails,
   });
+});
+
+export const markMessagesAsSeen = onCall<{
+  roomId: string;
+  messageIds: string[];
+}>({ enforceAppCheck: true }, async (request, response) => {
+  const userId = await onCallAuthGuard(request);
+  const { roomId, messageIds } = request.data;
+  const messageRef = db
+    .collection("roomMessages")
+    .doc(roomId)
+    .collection("messages")
+    .where("__name__", "in", messageIds);
+
+  const querySnapshot = await messageRef.get();
+
+  const batch = db.batch();
+
+  querySnapshot.docs.forEach((doc) => {
+    const seenBy = doc.data()?.seenBy ?? {};
+    if (seenBy[userId]) return;
+    seenBy[userId] = admin.firestore.FieldValue.serverTimestamp();
+    batch.update(doc.ref, { seenBy });
+  });
+
+  await batch.commit();
 });
 
 export const addUserToFirestore = auth.user().onCreate(async (user) => {

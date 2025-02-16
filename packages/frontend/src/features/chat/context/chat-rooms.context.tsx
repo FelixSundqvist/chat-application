@@ -3,16 +3,16 @@ import { createContext, use, useEffect, useMemo, useState } from "react";
 import {
   useSubscribeToFirestoreCollection,
   useSubscribeToFirestoreDoc,
-} from "@/lib/firebase/firestore";
+} from "@/lib/firebase/firestore.ts";
 import type {
   ChatMessage,
   ChatRoom,
   PrivateChatRoom,
   PublicChatRoom,
   UserRooms,
-} from "./chat.types";
+} from "../chat.types.ts";
 import { where } from "firebase/firestore";
-import { useFirebaseAuth } from "@/lib/firebase/auth";
+import { useFirebaseAuth } from "@/lib/firebase/auth.tsx";
 import { useParams } from "react-router-dom";
 import { getRoomLatestMessages } from "@/features/chat/data/get-room-latest-messages.ts";
 import { arrayToRecord } from "@/lib/array.ts";

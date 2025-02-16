@@ -18,3 +18,30 @@ This is enforced by a pre-commit hook that runs `commitlint` on the commit messa
 The frontend folder structure follows the [bulletproof-react](https://github.com/alan2207/bulletproof-react/blob/master/docs/project-structure.md) project structure.
 
 
+## Stack
+
+
+- Frontend:
+  - React
+  - Typescript
+  - Tailwind CSS
+  - Shadcn
+- Functions:
+  - esbuild
+- Shared:
+  - Typescript
+  - Eslint
+- CI/CD
+    - Github Actions
+    - Firebase deploy
+    - nx
+    - Husky
+    - Commitlint
+- Firebase:
+  - Functions
+  - Firestore
+  - Hosting
+  - App check
+  - Auth
+
+

@@ -1,36 +1,26 @@
 import { useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { callFirebaseFunction } from "@/lib/firebase/functions.ts";
 import ChatInput from "@/features/chat/components/chat.input.tsx";
-import useProcessedMessages from "@/features/chat/hooks/use-processed-messages.tsx";
 import { useScrollToLatestMessage } from "@/features/chat/hooks/use-scroll-to-latest-message.ts";
-import { Messages } from "@/features/chat/components/chat.messages.tsx";
-import { useSubscribeToFirestoreCollection } from "@/lib/firebase/firestore.ts";
-import type { ChatMessage } from "@/features/chat/chat.types.ts";
-import { orderBy } from "firebase/firestore";
-import { useChatRooms } from "@/features/chat/chat.context.tsx";
-import { routePaths } from "@/app/routes.ts";
-
-const queryConstraints = [orderBy("createdAt", "asc")];
+import { ChatMessages } from "@/features/chat/components/chat.messages.tsx";
+import { useSeenMessagesObserver } from "@/features/chat/hooks/use-seen-message-observer.ts";
+import {
+  ChatRoomMessagesProvider,
+  useChatRoomMessages,
+} from "@/features/chat/context/chat-room-users.context.tsx";
+import { useChatRooms } from "@/features/chat/context/chat-rooms.context.tsx";
 
 function ChatRoomPage() {
   const { roomId = "" } = useParams<{ roomId: string }>();
   const { currentRoom } = useChatRooms();
 
   const scrollRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
 
-  const messages = useSubscribeToFirestoreCollection<ChatMessage>({
-    collectionPath: `roomMessages/${roomId}/messages`,
-    queryConstraints,
-    onError: () => {
-      navigate(routePaths.notFound());
-    },
-  });
-
-  const formattedMessages = useProcessedMessages(messages);
+  const { messages } = useChatRoomMessages();
 
   useScrollToLatestMessage(scrollRef, messages);
+  useSeenMessagesObserver(roomId, messages);
 
   return (
     <div className="flex w-full h-full flex-col p-2 overflow-hidden">
@@ -38,7 +28,7 @@ function ChatRoomPage() {
         {currentRoom?.name}
       </h1>
       <div className="flex-1 gap-2 flex flex-col p-2 pt-4 overflow-y-auto">
-        <Messages messages={formattedMessages} />
+        <ChatMessages />
         <div ref={scrollRef} />
       </div>
       <div>
@@ -55,4 +45,10 @@ function ChatRoomPage() {
   );
 }
 
-export default ChatRoomPage;
+export default function ChatRoomPageWithContext() {
+  return (
+    <ChatRoomMessagesProvider>
+      <ChatRoomPage />
+    </ChatRoomMessagesProvider>
+  );
+}

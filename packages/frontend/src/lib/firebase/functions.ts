@@ -1,7 +1,11 @@
 import { httpsCallable } from "firebase/functions";
 import { auth, functions } from "@/config/firebase.ts";
 
-type FunctionNames = "sendMessage" | "createPrivateChatRoom";
+type FunctionNames =
+  | "sendMessage"
+  | "createPrivateChatRoom"
+  | "markMessagesAsSeen";
+
 export async function callFirebaseFunction<T, TData>(
   functionName: FunctionNames,
   data: TData,

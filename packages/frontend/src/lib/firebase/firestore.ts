@@ -100,7 +100,7 @@ function useSubscribeToFirestoreCollection<
   onError,
   valueTransformer,
 }: UseSubscribeToFirestoreArgs<TCollectionValue, TTransformedValue>) {
-  const [data, setData] = useState<
+  const [valuesArray, setValuesArray] = useState<
     (TTransformedValue | WithId<TCollectionValue>)[]
   >([]);
 
@@ -121,11 +121,11 @@ function useSubscribeToFirestoreCollection<
 
         if (valueTransformerRef.current) {
           const transformed = valueTransformerRef.current(values);
-          setData(transformed);
+          setValuesArray(transformed);
           return;
         }
 
-        setData(values);
+        setValuesArray(values);
       },
       (error) => {
         onErrorRef.current?.(error);
@@ -137,7 +137,7 @@ function useSubscribeToFirestoreCollection<
     };
   }, [collectionPath, disabled, onErrorRef, queryConstraints]);
 
-  return data;
+  return valuesArray;
 }
 
 export { useSubscribeToFirestoreCollection };

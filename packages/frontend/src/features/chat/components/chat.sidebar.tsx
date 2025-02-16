@@ -11,7 +11,6 @@ import {
 import { ChatRoomLink } from "@/features/chat/components/chat.room.link.tsx";
 import CreateChatRoomDialog from "@/features/chat/components/chat.create-room.dialog.tsx";
 import { useParams } from "react-router-dom";
-import { useChatRooms } from "@/features/chat/chat.context.tsx";
 import { useEffect, useState } from "react";
 import { v4 } from "uuid";
 import Logger from "@/lib/logger.ts";
@@ -27,6 +26,7 @@ import { Avatar, AvatarFallback } from "@/components/avatar.tsx";
 import { ChevronsUpDown, LogOut } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile.tsx";
 import { signOut, useFirebaseAuth } from "@/lib/firebase/auth.tsx";
+import { useChatRooms } from "@/features/chat/context/chat-rooms.context.tsx";
 
 function ChatSidebar() {
   const { roomId } = useParams<{ roomId: string }>();

@@ -22,10 +22,6 @@ service cloud.firestore {
       return isAuth() && request.auth.uid == createdBy;
     }
 
-    function isNonEmptyString(value) {
-      return value is string && value.size() > 0;
-    }
-
     match /publicRooms/{roomId} {
       allow read: if isAuth();
     }
@@ -41,13 +37,9 @@ service cloud.firestore {
     }
 
     match /roomMessages/{roomId} {
-      match /messages/{message} {
+      match /messages/{messageId} {
         allow read: if isInRoom(roomId);
       }
-    }
-
-    match /messageSeenBy/{roomId}/{message} {
-      allow read: if isInRoom(roomId);
     }
 
     match /users/{userId} {
