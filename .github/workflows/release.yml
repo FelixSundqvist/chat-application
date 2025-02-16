@@ -51,7 +51,7 @@ jobs:
         run: |
           echo "${FIREBASE_SERVICE_ACCOUNT}" > firebase-key.json 
           export GOOGLE_APPLICATION_CREDENTIALS=$PWD/firebase-key.json
-          firebase deploy
+          npx firebase deploy
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           FIREBASE_PROJECT_NAME: ${{ secrets.FIREBASE_PROJECT_NAME }}
