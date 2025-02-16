@@ -10,7 +10,8 @@
     "dev": "concurrently --kill-others-on-fail \"yarn emulators:start\" \"npx nx run-many -t dev\"",
     "ci": "yarn install --no-immutable",
     "prepare": "husky",
-    "emulators:start": "firebase emulators:start --import=./seed"
+    "emulators:start": "firebase emulators:start --import=./seed",
+    "create:release": "nx release --skip-publish && git push --tags"
   },
   "dependencies": {
     "eslint-config-prettier": "10.0.1",

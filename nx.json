@@ -5,7 +5,9 @@
       "cache": true
     },
     "build": {
-      "dependsOn": ["lint"],
+      "dependsOn": [
+        "lint"
+      ],
       "outputs": [
         "{projectRoot}/packages/frontend/dist",
         "{projectRoot}/packages/functions/lib"
@@ -53,7 +55,9 @@
   ],
   "generators": {},
   "release": {
-    "projects": ["packages/*"],
+    "projects": [
+      "packages/*"
+    ],
     "releaseTagPattern": "release/v{version}",
     "conventionalCommits": {
       "types": {
@@ -66,9 +70,10 @@
       "conventionalCommits": true
     },
     "changelog": {
-      "projectChangelogs": false,
-      "createRelease": "github",
-      "file": "false"
+      "workspaceChangelog": {
+        "file": false,
+        "createRelease": "github"
+      }
     },
     "git": {
       "tag": true,
