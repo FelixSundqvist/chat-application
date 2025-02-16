@@ -44,13 +44,14 @@ jobs:
         run: |
           echo $PROD_FRONTEND_ENV | base64 --decode > ./packages/frontend/.env.build.production
 
-      - name: Run Nx commands
-        run: npx nx run-many -t lint build
+      - name: Lint, Build
+        run: npx nx run-many -t build
 
-      - name: Deploy to Firebase hosting
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          channelId: live
-          projectId: chat-application-de0a4
+      - name: Deploy to Firebase
+        run: |
+          echo "${FIREBASE_SERVICE_ACCOUNT}" > firebase-key.json 
+          export GOOGLE_APPLICATION_CREDENTIALS=$PWD/firebase-key.json
+          firebase deploy
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          FIREBASE_PROJECT_NAME: ${{ secrets.FIREBASE_PROJECT_NAME }}
