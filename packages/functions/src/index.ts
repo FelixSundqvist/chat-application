@@ -89,8 +89,9 @@ export const markMessagesAsSeen = onCall<{
   const batch = db.batch();
 
   querySnapshot.docs.forEach((doc) => {
+    const createdBy = doc.data().createdBy;
     const seenBy = doc.data()?.seenBy ?? {};
-    if (seenBy[userId]) return;
+    if (seenBy[userId] || userId === createdBy) return;
     seenBy[userId] = admin.firestore.FieldValue.serverTimestamp();
     batch.update(doc.ref, { seenBy });
   });
