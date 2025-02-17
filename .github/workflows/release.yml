@@ -1,8 +1,8 @@
-name: Release monorepo
+name: Release
 on:
-  push:
-    branches:
-      - main
+  release:
+    types:
+      - published
 permissions:
   actions: read
   contents: read
