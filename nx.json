@@ -9,8 +9,7 @@
         "lint"
       ],
       "outputs": [
-        "{projectRoot}/packages/frontend/dist",
-        "{projectRoot}/packages/functions/lib"
+        "{projectRoot}/dist"
       ],
       "cache": true
     }

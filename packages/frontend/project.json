@@ -1,9 +1,14 @@
 {
+  "name": "frontend",
   "targets": {
     "build": {
+      "inputs": ["!{projectRoot}/**/*.md"],
+      "outputs": ["{projectRoot}/dist"],
       "configurations": {
-        "development": {},
-        "production": {}
+        "development": {
+        },
+        "production": {
+        }
       }
     }
   }

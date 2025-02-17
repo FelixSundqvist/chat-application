@@ -1,0 +1,27 @@
+name: "Cache and Install Dependencies"
+description: "Caches and installs dependencies for a Node.js project"
+inputs:
+  os-name:
+    description: "Operating system name (e.g., ubuntu-latest, windows-latest)"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Node.js
+      uses: actions/setup-node@v4.2.0
+      with:
+        node-version: "22"
+#        cache: "yarn"
+    - run: npm i -g yarn
+    - name: Cache node_modules
+      uses: actions/cache@v4.2.0
+      with:
+        path: |
+          **/node_modules/*
+        key: monorepo-yarn-${{ inputs.os-name }}-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          monorepo-yarn-${{ inputs.os-name }}-
+
+    - name: Install dependencies
+      run: yarn install --immutable
+      shell: bash

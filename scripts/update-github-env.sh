@@ -1,9 +1,8 @@
 #!/bin/bash
 
 # NOTE: Make this more robust if needed
-KEY="PROD_FRONTEND_ENV"
-ENV_FILE="./packages/frontend/.env.build.production"
-REPO="FelixSundqvist/chat-application"
+ENV_FILE=".env"
+REPOSITORY="FelixSundqvist/chat-application"
 
 # Ensure the GitHub CLI (gh) is installed
 if ! command -v gh &> /dev/null; then
@@ -11,14 +10,25 @@ if ! command -v gh &> /dev/null; then
   exit 1
 fi
 
-# Check if the .env file exists
-if [[ ! -f $ENV_FILE ]]; then
-  echo ".env file not found at $ENV_FILE"
-  exit 1
-fi
+# Loop through every variable and add them to gh secrets:
 
-BASE_64_ENV=$(openssl base64 -A -in $ENV_FILE)
+while read -r line || [[ -n "$line" ]]; do
+  # Skip empty lines and lines starting with #
+  if [[ -z "$line" || "$line" =~ ^# ]]; then
+    continue
+  fi
 
-gh secret set "$KEY" -b"$BASE_64_ENV" -R "$REPO"
+  # Split the line into key and value
+  IFS="=" read -r key value <<< "$line"
 
-echo "Secrets updated successfully."
+  # Ensure both key and value are not empty
+  if [[ -n "$key" && -n "$value" ]]; then
+    echo "Adding secret: $key $value"
+#    gh secret set "$key" -b"$value" -R "$REPOSITORY"
+  else
+    echo "Skipping invalid line: $line"
+  fi
+done < "$ENV_FILE"
+
+
+
