@@ -24,9 +24,11 @@ function SignInPage() {
     setEmailSent(true);
   }
 
+  const signInPageClass = "bg-gradient-to-r from-indigo-500 to-blue-400";
+
   if (emailSent)
     return (
-      <Page>
+      <Page className={signInPageClass}>
         <Card className="w-[350px]">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">Sign in link sent</CardTitle>
@@ -39,8 +41,8 @@ function SignInPage() {
     );
 
   return (
-    <Page>
-      <Card className="w-[350px]">
+    <Page className={signInPageClass}>
+      <Card className="w-[350px] bg-background">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Welcome</CardTitle>
           <CardDescription className="flex gap-2 flex-col">
@@ -64,7 +66,7 @@ function SignInPage() {
             </Button>
           </form>
           <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-            <span className="relative z-10 bg-background px-2 text-muted-foreground">
+            <span className="relative z-10 px-2 text-muted-foreground">
               Or continue with
             </span>
           </div>
