@@ -108,8 +108,31 @@ export const addUserToFirestore = auth.user().onCreate(async (user) => {
     createdAt: admin.firestore.FieldValue.serverTimestamp(),
     photoURL,
   });
+
+  const invitedUsersRef = await db
+    .collection("invitedUsers")
+    .where("email", "==", email)
+    .limit(1)
+    .get();
+
   const userRoomsRef = db.collection("userRooms").doc(uid);
-  await userRoomsRef.set({
-    rooms: [],
+
+  if (invitedUsersRef.empty) {
+    return userRoomsRef.set({
+      rooms: [],
+    });
+  }
+
+  const invitedUserData = invitedUsersRef.docs[0].data();
+  const uniqueRoomIds = new Set<string>();
+
+  invitedUserData.rooms.forEach((room: { roomId: string }) => {
+    uniqueRoomIds.add(room.roomId);
+  });
+
+  await invitedUsersRef.docs[0].ref.delete();
+
+  return userRoomsRef.set({
+    rooms: Array.from(uniqueRoomIds),
   });
 });
