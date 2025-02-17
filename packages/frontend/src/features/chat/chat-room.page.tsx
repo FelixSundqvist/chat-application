@@ -9,11 +9,9 @@ import {
   ChatRoomMessagesProvider,
   useChatRoomMessages,
 } from "@/features/chat/context/chat-room-users.context.tsx";
-import { useChatRooms } from "@/features/chat/context/chat-rooms.context.tsx";
 
 function ChatRoomPage() {
   const { roomId = "" } = useParams<{ roomId: string }>();
-  const { currentRoom } = useChatRooms();
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -23,10 +21,7 @@ function ChatRoomPage() {
   useSeenMessagesObserver(roomId, messages);
 
   return (
-    <div className="flex w-full h-full flex-col p-2 overflow-hidden">
-      <h1 className="text-2xl dark:text-gray-200 border-b-2 border-gray-200 pb-2">
-        {currentRoom?.name}
-      </h1>
+    <div className="flex w-full h-full flex-col overflow-hidden">
       <div className="flex-1 gap-2 flex flex-col p-2 pt-4 overflow-y-auto">
         <ChatMessages />
         <div ref={scrollRef} />

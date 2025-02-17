@@ -27,6 +27,9 @@ function formatSentAtTime(date: Date) {
   const diffHours = Math.floor(diffMinutes / 60);
   const diffDays = Math.floor(diffHours / 24);
 
+  if (diffSeconds < 60) {
+    return relativeDateFormatter.format(-diffSeconds, "second");
+  }
   if (diffMinutes < 30)
     return relativeDateFormatter.format(-diffMinutes, "minute");
   if (diffHours < 24) return relativeDateFormatter.format(-diffHours, "hour");
@@ -50,7 +53,7 @@ export function ChatRoomLink<
     <div
       className={cn(
         "cursor-pointer p-1 my-1 rounded-xl",
-        isSelected ? "bg-blue-600" : "hover:bg-blue-400  hover:text-white",
+        isSelected ? "bg-blue-700" : "hover:bg-blue-500  hover:text-white",
       )}
     >
       <Link
@@ -64,16 +67,24 @@ export function ChatRoomLink<
             Public
           </span>
         )}
-        <span className="block pl-2 py-1 font-light text-sm">
-          {latestMessage !== undefined && (
-            <span>
-              {[
-                latestMessage.content,
-                formatSentAtTime(latestMessage.createdAt.toDate()),
-              ].join(" - ")}
-            </span>
-          )}
-        </span>
+        {latestMessage !== undefined && (
+          <div
+            className={cn(
+              "block px-1 font-light text-sm flex-wrap text-gray-300",
+              isSelected && "text-gray-w00",
+            )}
+          >
+            <>
+              <span className="italic">Last message: </span>
+              <span className="truncate">
+                {[
+                  latestMessage.content,
+                  formatSentAtTime(latestMessage.createdAt.toDate()),
+                ].join(" - ")}
+              </span>
+            </>
+          </div>
+        )}
       </Link>
     </div>
   );

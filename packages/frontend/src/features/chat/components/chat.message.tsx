@@ -83,7 +83,10 @@ function ChatMessage({ message }: { message: ProcessedChatMessage }) {
           <Tooltip delayDuration={100}>
             <TooltipTrigger asChild>
               {seenByArray.length > 0 && (
-                <span className="flex items-center gap-1 text-sm font-semibold">
+                <span
+                  aria-label={`Seen by ${seenByArray.length} people`}
+                  className="flex items-center gap-1 text-sm font-semibold"
+                >
                   {seenByArray.length}
                   <EyeIcon size={16} />
                 </span>
@@ -91,7 +94,11 @@ function ChatMessage({ message }: { message: ProcessedChatMessage }) {
             </TooltipTrigger>
             <TooltipContent className="inline-flex flex-col gap-1 items-start ">
               {seenByArray.map((seenBy) => (
-                <div className="inline-flex gap-1" key={seenBy.id}>
+                <div
+                  key={seenBy.id}
+                  className="inline-flex gap-1"
+                  aria-label={`Seen by ${seenBy.displayName}`}
+                >
                   <span className="flex-1">{seenBy.displayName}</span>
                   <span>- {seenBy.seenAt}</span>
                 </div>

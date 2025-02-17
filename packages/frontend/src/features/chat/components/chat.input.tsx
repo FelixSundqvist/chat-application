@@ -1,6 +1,6 @@
 import { Button } from "@/components/button.tsx";
 import { useState } from "react";
-import { SendHorizonal } from "lucide-react";
+import { Loader, SendHorizonal } from "lucide-react";
 import { cn } from "@/lib/style.ts";
 import { toast } from "sonner";
 
@@ -33,7 +33,7 @@ function ChatInput({
         void handleSendMessage();
       }}
     >
-      <div className="relative w-full h-full">
+      <div className="relative w-full h-full px-2">
         <label htmlFor="message" className="sr-only">
           Send message
         </label>
@@ -42,8 +42,8 @@ function ChatInput({
           aria-label={"Send message"}
           disabled={isSending}
           className={cn(
-            "h-full w-full p-2 bg-gray-200 focus:outline-gray-200 rounded-xl dark:bg-gray-600 dark:focus:outline-gray-800 dark:text-gray-200",
-            isSending && "opacity-50",
+            "h-full w-full p-2 bg-gray-200 focus:outline-gray-200 rounded-xl dark:bg-gray-600 dark:focus:outline-gray-800 dark:text-gray-200 opacity-80",
+            isSending && "dark:bg-gray-500 opacity-20",
           )}
           placeholder="Send message"
           value={message}
@@ -54,14 +54,22 @@ function ChatInput({
               void handleSendMessage();
             }
           }}
-        ></textarea>
+        />
         <Button
           type={"submit"}
-          className="absolute bottom-2 right-2 rounded-xl hover:bg-inherit hover:text-gray-500"
+          className="
+          translate-y-1/2
+          absolute z-50
+          bottom-[50%]
+          right-2
+          rounded-xl
+          hover:text-gray-300
+          text-gray-100
+          cursor-pointer"
           disabled={message.length === 0 || isSending}
           variant="ghost"
         >
-          <SendHorizonal size={24} />
+          {isSending ? <Loader size={24} /> : <SendHorizonal size={24} />}
         </Button>
       </div>
     </form>

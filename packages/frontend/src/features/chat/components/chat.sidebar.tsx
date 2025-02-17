@@ -54,7 +54,7 @@ function ChatSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader>
+      <SidebarHeader className="flex justify-center gap-2 px-2 pt-[1.2rem]">
         <h1 className={"text-lg font-bold"}>Chats</h1>
       </SidebarHeader>
       <SidebarContent>
