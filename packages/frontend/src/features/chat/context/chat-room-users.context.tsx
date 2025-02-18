@@ -75,7 +75,9 @@ const useChatRoomMessagesLogic = () => {
         userDisplayName: user?.displayName ?? "Unknown",
       };
 
-      if (!lastMessage || lastMessage?.[0] !== dateKey) {
+      const isNewDateKey = !lastMessage || lastMessage?.[0] !== dateKey;
+
+      if (isNewDateKey) {
         dateMessageTuple.push([dateKey, [formattedMessage]]);
       } else {
         lastMessage[1].push(formattedMessage);

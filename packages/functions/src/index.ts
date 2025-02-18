@@ -40,15 +40,15 @@ export const sendMessage = onCall<{
   };
 
   if (publicRoomSnapshot.exists) {
-    await publicRoom.update(payload);
-  } else {
-    const privateRoom = db.collection("privateRooms").doc(roomId);
-    const privateRoomSnapshot = await privateRoom.get();
-    if (!privateRoomSnapshot.exists) {
-      throw new HttpsError("not-found", "Room not found.");
-    }
-    await privateRoom.update(payload);
+    return publicRoom.update(payload);
   }
+
+  const privateRoom = db.collection("privateRooms").doc(roomId);
+  const privateRoomSnapshot = await privateRoom.get();
+  if (!privateRoomSnapshot.exists) {
+    throw new HttpsError("not-found", "Room not found.");
+  }
+  return privateRoom.update(payload);
 });
 
 export const createPrivateChatRoom = onCall<{

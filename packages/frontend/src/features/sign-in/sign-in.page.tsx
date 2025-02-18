@@ -11,12 +11,13 @@ import {
 import { sendEmailLink, signInWithGoogle } from "@/lib/firebase/auth.tsx";
 import { Input } from "@/components/input.tsx";
 import { Label } from "@/components/label.tsx";
+import type { FormEvent } from "react";
 import { useState } from "react";
 
 function SignInPage() {
   const [emailSent, setEmailSent] = useState(false);
 
-  async function onEmailSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function onEmailSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email");

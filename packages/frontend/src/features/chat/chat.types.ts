@@ -15,6 +15,7 @@ export interface ChatRoom {
   createdBy: string;
   createdAt: Timestamp;
   latestMessageRef?: DocumentReference<ChatMessage>;
+  updatedAt: Timestamp;
 }
 
 export interface PublicChatRoom extends ChatRoom {
