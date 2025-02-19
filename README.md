@@ -12,6 +12,35 @@ This application has features such as:
  - Realtime chatting
  - Public/Private chat rooms
 
+## Installation
+
+1. Install dependencies:
+
+```bash
+  # Install nvm
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+  
+  # Install node 22
+  nvm install 22
+  
+  # Set node 22 as default version
+  nvm alias default 22
+  
+  # Install yarn
+  npm install --global yarn
+ 
+  # Install Firebase cli
+  curl -sL https://firebase.tools | bash
+  
+  # Login to Firebase
+  
+  firebase login
+  # Install npm packages
+  yarn
+```
+2. Ask for or create `.env` files 
+3. Run in dev mode `yarn dev`
+
 ## Commits
 
 This repository is using the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification for commit messages. This is to ensure that the commit messages are easy to read and understand.
