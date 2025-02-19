@@ -1,15 +1,34 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import { routes } from "@/app/routes.ts";
-import SignInPage from "@/features/sign-in/sign-in.page.tsx";
-import ChatLayout from "@/features/chat/chat.layout.tsx";
-import ChatRoomPage from "@/features/chat/chat-room.page.tsx";
-import NotFoundPage from "@/features/error/not-found.page.tsx";
 import { auth } from "@/config/firebase.ts";
-import RouteErrorBoundary from "@/features/error/components/route-error-boundary.tsx";
-import PublicRoute from "@/app/components/public-route.tsx";
-import ProtectedRoute from "@/app/components/protected-route.tsx";
-import { SelectRoom } from "@/features/chat/components/chat.select-room.tsx";
 import { signInWithEmail } from "@/lib/firebase/auth.tsx";
+import { lazy } from "react";
+
+const SignInPage = lazy(
+  async () => await import("@/features/sign-in/sign-in.page.tsx"),
+);
+const NotFoundPage = lazy(
+  async () => await import("@/features/error/not-found.page.tsx"),
+);
+const RouteErrorBoundary = lazy(
+  async () =>
+    await import("@/features/error/components/route-error-boundary.tsx"),
+);
+const PublicRoute = lazy(
+  async () => await import("@/app/components/public-route.tsx"),
+);
+const ProtectedRoute = lazy(
+  async () => await import("@/app/components/protected-route.tsx"),
+);
+const SelectRoom = lazy(
+  async () => await import("@/features/chat/components/chat.select-room.tsx"),
+);
+const ChatLayout = lazy(
+  async () => await import("@/features/chat/chat.layout.tsx"),
+);
+const ChatRoomPage = lazy(
+  async () => await import("@/features/chat/chat-room.page.tsx"),
+);
 
 export const router = createBrowserRouter([
   {
