@@ -2,6 +2,7 @@
 
 ![Releases](https://github.com/FelixSundqvist/chat-application/actions/workflows/release.yml/badge.svg)
 
+This project is work in progress.
 
 ## Description
 
