@@ -57,9 +57,11 @@ const useChatRoomsLogic = () => {
 
   const allRooms = useMemo(
     () =>
-      [...privateRooms, ...publicRooms].sort(
-        (a, b) => b.updatedAt.toMillis() - a.updatedAt.toMillis(),
-      ),
+      [...privateRooms, ...publicRooms].sort((a, b) => {
+        const aMilliseconds = a.updatedAt?.seconds ?? -Infinity;
+        const bMilliseconds = b.updatedAt?.seconds ?? -Infinity;
+        return bMilliseconds - aMilliseconds;
+      }),
     [privateRooms, publicRooms],
   );
 
