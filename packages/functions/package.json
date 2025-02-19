@@ -3,9 +3,8 @@
   "version": "0.3.0",
   "scripts": {
     "lint": "eslint --fix",
-    "dev": "node esbuild.config.mjs --watch",
+    "dev": "esbuild --watch src/index.ts --bundle --platform=node --outdir=dist",
     "build": "node esbuild.config.mjs",
-    "build:watch": "node esbuild.config.js --watch",
     "serve": "yarn build && firebase emulators:start --only functions",
     "shell": "yarn build && firebase functions:shell",
     "start": "yarn shell",
