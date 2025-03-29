@@ -10,7 +10,7 @@ This is a chat application that allows users to send messages to each other. The
 
 This application has features such as: 
  - Realtime chatting
- - Public/Private chat rooms
+ - Private chat rooms
 
 ## Installation
 

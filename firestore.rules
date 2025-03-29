@@ -11,24 +11,16 @@ service cloud.firestore {
       return request.auth.uid == userId;
     }
 
-    function isInRoom(roomId) {
-      return isAuth() && (
-        exists(/databases/$(database)/documents/publicRooms/$(roomId)) ||
-          roomId in get(/databases/$(database)/documents/userRooms/$(request.auth.uid)).data.rooms
-      );
+    function isCurrentUserInRoom(roomId) {
+      return isAuth() && roomId in get(/databases/$(database)/documents/userRooms/$(request.auth.uid)).data.rooms
     }
 
     function isCreator(createdBy) {
       return isAuth() && request.auth.uid == createdBy;
     }
 
-    match /publicRooms/{roomId} {
-      allow read: if isAuth();
-    }
-
-    match /privateRooms/{roomId} {
-      // if roomId in userRooms
-      allow read: if isInRoom(roomId);
+    match /rooms/{roomId} {
+      allow read: if isCurrentUserInRoom(roomId);
       allow update: if isCreator(resource.data.createdBy);
     }
 
@@ -38,15 +30,12 @@ service cloud.firestore {
 
     match /roomMessages/{roomId} {
       match /messages/{messageId} {
-        allow read: if isInRoom(roomId);
+        allow read, create: if isCurrentUserInRoom(roomId);
       }
     }
 
     match /users/{userId} {
       allow read: if isAuth();
-      match /email {
-        allow read: if isCurrentUser(userId);
-      }
     }
   }
 }

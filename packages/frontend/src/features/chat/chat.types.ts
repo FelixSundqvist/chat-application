@@ -11,21 +11,13 @@ export interface ChatMessage {
 }
 
 export interface ChatRoom {
+  id: string;
   name: string;
   createdBy: string;
   createdAt: Timestamp;
   latestMessageRef?: DocumentReference<ChatMessage>;
   updatedAt: Timestamp;
-}
-
-export interface PublicChatRoom extends ChatRoom {
-  id: string;
-  isPublic: true;
-}
-
-export interface PrivateChatRoom extends ChatRoom {
-  id: string;
-  isPublic: false;
+  userIds: string[];
 }
 
 export interface UserRooms {
@@ -55,5 +47,6 @@ export type ProcessedChatMessage = WithId<
 export type ChatMessageByDateTuple = [string, [ProcessedChatMessage]];
 
 export interface User {
+  id: string;
   displayName: string;
 }

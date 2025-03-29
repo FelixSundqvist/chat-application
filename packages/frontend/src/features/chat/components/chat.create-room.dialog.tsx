@@ -1,3 +1,4 @@
+import { Button } from "@/components/button.tsx";
 import {
   Dialog,
   DialogClose,
@@ -7,8 +8,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/dialog.tsx";
-import { Input } from "@/components/input.tsx";
-import { Button } from "@/components/button.tsx";
 import {
   Form,
   FormControl,
@@ -17,13 +16,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/form.tsx";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Input } from "@/components/input.tsx";
 import { callFirebaseFunction } from "@/lib/firebase/functions.ts";
-import { useState } from "react";
-import { toast } from "sonner";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { DialogDescription } from "@radix-ui/react-dialog";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 
 const formSchema = z.object({
   name: z.string().min(3).max(20),
@@ -115,7 +115,7 @@ function CreateChatRoomDialog() {
           <DialogTitle>Create new chat room</DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          Create a new private chat room and invite a user to join.
+          Create a new chat room and invite a user to join.
         </DialogDescription>
         <DialogForm onClose={() => setOpen(false)} />
       </DialogContent>

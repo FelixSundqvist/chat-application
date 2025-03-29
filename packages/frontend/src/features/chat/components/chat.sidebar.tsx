@@ -1,3 +1,12 @@
+import { Avatar, AvatarFallback } from "@/components/avatar.tsx";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/dropdown-menu.tsx";
 import {
   Sidebar,
   SidebarContent,
@@ -8,31 +17,22 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/sidebar.tsx";
-import { ChatRoomLink } from "@/features/chat/components/chat.room.link.tsx";
 import CreateChatRoomDialog from "@/features/chat/components/chat.create-room.dialog.tsx";
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { v4 } from "uuid";
-import Logger from "@/lib/logger.ts";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/dropdown-menu.tsx";
-import { Avatar, AvatarFallback } from "@/components/avatar.tsx";
-import { ChevronsUpDown, LogOut } from "lucide-react";
+import { ChatRoomLink } from "@/features/chat/components/chat.room.link.tsx";
+import { useChatRooms } from "@/features/chat/context/chat-rooms.context.tsx";
 import { useIsMobile } from "@/hooks/use-mobile.tsx";
 import { signOut, useFirebaseAuth } from "@/lib/firebase/auth.tsx";
-import { useChatRooms } from "@/features/chat/context/chat-rooms.context.tsx";
+import Logger from "@/lib/logger.ts";
+import { ChevronsUpDown, LogOut } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { v4 } from "uuid";
 
 function ChatSidebar() {
   const { roomId } = useParams<{ roomId: string }>();
   const { authUser } = useFirebaseAuth();
 
-  const { allRooms, latestMessageRecord } = useChatRooms();
+  const { rooms, latestMessageRecord } = useChatRooms();
 
   const [refreshKey, setRefreshKey] = useState(v4());
 
@@ -59,7 +59,7 @@ function ChatSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup key={refreshKey}>
-          {allRooms?.map((room) => (
+          {rooms?.map((room) => (
             <ChatRoomLink
               key={room.id}
               room={room}

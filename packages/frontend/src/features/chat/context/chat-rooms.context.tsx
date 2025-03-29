@@ -1,21 +1,15 @@
-import type { PropsWithChildren } from "react";
-import { createContext, use, useEffect, useMemo, useState } from "react";
+import { getRoomLatestMessages } from "@/features/chat/data/get-room-latest-messages.ts";
+import { arrayToRecord } from "@/lib/array.ts";
+import { useFirebaseAuth } from "@/lib/firebase/auth.tsx";
 import {
   useSubscribeToFirestoreCollection,
   useSubscribeToFirestoreDoc,
 } from "@/lib/firebase/firestore.ts";
-import type {
-  ChatMessage,
-  ChatRoom,
-  PrivateChatRoom,
-  PublicChatRoom,
-  UserRooms,
-} from "../chat.types.ts";
 import { where } from "firebase/firestore";
-import { useFirebaseAuth } from "@/lib/firebase/auth.tsx";
+import type { PropsWithChildren } from "react";
+import { createContext, use, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getRoomLatestMessages } from "@/features/chat/data/get-room-latest-messages.ts";
-import { arrayToRecord } from "@/lib/array.ts";
+import type { ChatMessage, ChatRoom, UserRooms } from "../chat.types.ts";
 
 const useChatRoomsLogic = () => {
   const { roomId = "" } = useParams<{ roomId: string }>();
@@ -24,57 +18,35 @@ const useChatRoomsLogic = () => {
   const [latestMessageRecord, setLatestMessageRecord] =
     useState<Record<string, ChatMessage>>();
 
-  const publicRooms = useSubscribeToFirestoreCollection<
-    ChatRoom,
-    PublicChatRoom
-  >({
-    collectionPath: `publicRooms/`,
-    valueTransformer: (values) => values.map((v) => ({ ...v, isPublic: true })),
-  });
-
   const userRooms = useSubscribeToFirestoreDoc<UserRooms>({
     docPath: `userRooms/${authUser?.uid}`,
   });
 
-  const privateRooms = useSubscribeToFirestoreCollection<
-    ChatRoom,
-    PrivateChatRoom
-  >({
-    collectionPath: `privateRooms/`,
+  const rooms = useSubscribeToFirestoreCollection<ChatRoom>({
+    collectionPath: `rooms/`,
     queryConstraints: useMemo(
       () => [where("__name__", "in", userRooms?.rooms ?? [])],
       [userRooms?.rooms],
     ),
     disabled: (userRooms?.rooms ?? []).length === 0,
-    valueTransformer: (values) =>
-      values.map((v) => ({ ...v, isPublic: false })),
   });
 
   const currentRoom = useMemo(
-    () => [...privateRooms, ...publicRooms].find((r) => r.id === roomId),
-    [privateRooms, publicRooms, roomId],
-  );
-
-  const allRooms = useMemo(
-    () =>
-      [...privateRooms, ...publicRooms].sort((a, b) => {
-        const aMilliseconds = a.updatedAt?.seconds ?? -Infinity;
-        const bMilliseconds = b.updatedAt?.seconds ?? -Infinity;
-        return bMilliseconds - aMilliseconds;
-      }),
-    [privateRooms, publicRooms],
+    () => rooms.find((r) => r.id === roomId),
+    [rooms, roomId],
   );
 
   useEffect(() => {
-    getRoomLatestMessages(allRooms).then((results) => {
+    getRoomLatestMessages(rooms).then((results) => {
       setLatestMessageRecord(
         arrayToRecord(results, "id", (r) => r.latestMessage),
       );
     });
-  }, [allRooms]);
+  }, [rooms]);
 
   return {
-    allRooms,
+    roomId,
+    rooms,
     currentRoom,
     latestMessageRecord,
   };

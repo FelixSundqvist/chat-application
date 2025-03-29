@@ -1,55 +1,11 @@
 import * as admin from "firebase-admin";
-import { auth } from "firebase-functions/v1";
 import { HttpsError, onCall } from "firebase-functions/https";
-import { onCallAuthGuard } from "./utils/auth-guard.js";
+import { auth, firestore } from "firebase-functions/v1";
 import validator from "validator";
-import { sanitize } from "./utils/sanitize";
-import { createChatRoomAndAddUsers } from "./utils/create-chat-room-and-add-users";
 import { db } from "./config";
-
-export const sendMessage = onCall<{
-  roomId: string;
-  content: string;
-}>({ enforceAppCheck: true }, async (request) => {
-  const userId = await onCallAuthGuard(request);
-  const { roomId, content } = request.data;
-
-  const sanitizedContent = sanitize(content);
-
-  const messageRef = db
-    .collection("roomMessages")
-    .doc(roomId)
-    .collection("messages")
-    .doc();
-
-  const timestamp = admin.firestore.FieldValue.serverTimestamp();
-
-  await messageRef.set({
-    content: sanitizedContent,
-    createdBy: userId,
-    createdAt: timestamp,
-    seenBy: {},
-  });
-
-  const publicRoom = db.collection("publicRooms").doc(roomId);
-  const publicRoomSnapshot = await publicRoom.get();
-
-  const payload = {
-    latestMessageRef: messageRef,
-    updatedAt: timestamp,
-  };
-
-  if (publicRoomSnapshot.exists) {
-    return publicRoom.update(payload);
-  }
-
-  const privateRoom = db.collection("privateRooms").doc(roomId);
-  const privateRoomSnapshot = await privateRoom.get();
-  if (!privateRoomSnapshot.exists) {
-    throw new HttpsError("not-found", "Room not found.");
-  }
-  return privateRoom.update(payload);
-});
+import { onCallAuthGuard } from "./utils/auth-guard.js";
+import { createChatRoomAndAddUsers } from "./utils/create-chat-room-and-add-users";
+import { sanitize } from "./utils/sanitize";
 
 export const createPrivateChatRoom = onCall<{
   name: string;
@@ -99,6 +55,38 @@ export const markMessagesAsSeen = onCall<{
   await batch.commit();
 });
 
+export const getRoomUsers = onCall<{ roomId: string }>(
+  { enforceAppCheck: true },
+  async (request) => {
+    const userId = await onCallAuthGuard(request);
+    const { roomId } = request.data;
+    const roomRef = db.collection("rooms").doc(roomId);
+    const roomSnapshot = await roomRef.get();
+    if (!roomSnapshot.exists) {
+      throw new HttpsError("not-found", "Room not found.");
+    }
+    const userIds: string[] = roomSnapshot.data()?.userIds ?? [];
+
+    if (!userIds.includes(userId)) {
+      throw new HttpsError(
+        "permission-denied",
+        "You are not a member of this room.",
+      );
+    }
+
+    const userRefs = userIds.map((userId) =>
+      db.collection("users").doc(userId),
+    );
+    const userSnapshots = await Promise.all(userRefs.map((ref) => ref.get()));
+    return userSnapshots.map((snapshot) => {
+      return {
+        id: snapshot.id,
+        ...snapshot.data(),
+      };
+    });
+  },
+);
+
 export const addUserToFirestore = auth.user().onCreate(async (user) => {
   const { uid, email, displayName, photoURL } = user;
   const userRef = db.collection("users").doc(uid);
@@ -132,7 +120,40 @@ export const addUserToFirestore = auth.user().onCreate(async (user) => {
 
   await invitedUsersRef.docs[0].ref.delete();
 
+  // Add user to room
+  for (const roomId of uniqueRoomIds) {
+    const roomRef = db.collection("rooms").doc(roomId);
+    const room = await roomRef.get();
+    if (!room.exists) continue;
+    const userIds = room.data()?.userIds ?? [];
+    userIds.push(uid);
+    await roomRef.update({
+      userIds,
+    });
+  }
+
   return userRoomsRef.set({
     rooms: Array.from(uniqueRoomIds),
   });
 });
+
+export const onMessageCreate = firestore
+  .document("roomMessages/{roomId}/messages/{messageId}")
+  .onCreate(async (snapshot, context) => {
+    const { roomId } = context.params;
+
+    if (!snapshot.exists) {
+      console.error("Message not found!");
+      return;
+    }
+    const message = snapshot.data();
+
+    const room = db.collection("rooms").doc(roomId);
+
+    const payload = {
+      latestMessageRef: snapshot.ref,
+      updatedAt: message?.createdAt,
+    };
+
+    await room.update(payload);
+  });

@@ -31,7 +31,7 @@ export async function createChatRoomAndAddUsers({
 
   try {
     return db.runTransaction(async (transaction) => {
-      const roomRef = db.collection("privateRooms").doc();
+      const roomRef = db.collection("rooms").doc();
       const roomId = roomRef.id;
       const userRoomsCollection = db.collection("userRooms");
       const userIdsToAdd = [currentUserId, ...invitedUserIds];
@@ -47,6 +47,7 @@ export async function createChatRoomAndAddUsers({
         name,
         createdBy: currentUserId,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        userIds: userIdsToAdd,
       });
 
       // Step 2: Update the `userRooms` collection for all users

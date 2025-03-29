@@ -1,3 +1,5 @@
+import { db } from "@/config/firebase.ts";
+import type { WithId } from "@/lib/firebase/types.ts";
 import type {
   DocumentData,
   QueryConstraint,
@@ -11,8 +13,6 @@ import {
   onSnapshot,
   query,
 } from "firebase/firestore";
-import { db } from "@/config/firebase.ts";
-import type { WithId } from "@/lib/firebase/types.ts";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -108,9 +108,7 @@ function useSubscribeToFirestoreCollection<
   const onErrorRef = useRef(onError);
 
   useEffect(() => {
-    if (disabled) {
-      return;
-    }
+    if (disabled) return;
 
     const constraints = queryConstraints ?? [];
 
