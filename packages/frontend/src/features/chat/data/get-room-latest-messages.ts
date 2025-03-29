@@ -1,7 +1,7 @@
-import type { DocumentReference } from "firebase/firestore";
-import { getDoc } from "firebase/firestore";
 import type { ChatMessage, ChatRoom } from "@/features/chat/chat.types.ts";
 import type { WithId } from "@/lib/firebase/types.ts";
+import type { DocumentReference } from "firebase/firestore";
+import { getDoc } from "firebase/firestore";
 
 type RoomWithLatestMessageRef = WithId<ChatRoom> & {
   latestMessageRef: DocumentReference<ChatMessage>;

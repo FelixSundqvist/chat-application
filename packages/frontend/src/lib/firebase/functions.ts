@@ -1,17 +1,18 @@
-import { httpsCallable } from "firebase/functions";
 import { auth, functions } from "@/config/firebase.ts";
+import { httpsCallable } from "firebase/functions";
 
 type FunctionNames =
-  | "sendMessage"
-  | "createPrivateChatRoom"
-  | "markMessagesAsSeen";
+  | "createChatRoom"
+  | "markMessagesAsSeen"
+  | "getRoomUsers"
+  | "inviteUserToChatRoom";
 
-export async function callFirebaseFunction<T, TData>(
+export async function callFirebaseFunction<TResponse, TFunctionArgs>(
   functionName: FunctionNames,
-  data: TData,
+  functionArgs: TFunctionArgs,
 ) {
   await auth.authStateReady();
   const fn = httpsCallable(functions, functionName);
-  const result = await fn(data);
-  return result.data as T;
+  const result = await fn(functionArgs);
+  return result.data as TResponse;
 }

@@ -1,12 +1,8 @@
-import type { WithId } from "@/lib/firebase/types.ts";
-import type {
-  ChatMessage,
-  PrivateChatRoom,
-  PublicChatRoom,
-} from "@/features/chat/chat.types.ts";
-import { Link } from "react-router-dom";
 import { routePaths } from "@/app/routes.ts";
+import type { ChatMessage, ChatRoom } from "@/features/chat/chat.types.ts";
+import type { WithId } from "@/lib/firebase/types.ts";
 import { cn } from "@/lib/style.ts";
+import { Link } from "react-router-dom";
 
 const relativeDateFormatter = new Intl.RelativeTimeFormat(["en", "fi"], {
   numeric: "auto",
@@ -38,9 +34,7 @@ function formatSentAtTime(date: Date) {
   return dateFormatter.format(date);
 }
 
-export function ChatRoomLink<
-  TRoom extends WithId<PublicChatRoom | PrivateChatRoom>,
->({
+export function ChatRoomLink<TRoom extends WithId<ChatRoom>>({
   room,
   isSelected,
   latestMessage,
@@ -62,11 +56,6 @@ export function ChatRoomLink<
         className={cn("block pl-2 pb-1 font-light relative")}
       >
         <span>{room.name}</span>
-        {room.isPublic && (
-          <span className="absolute p-1 top-0 right-0 text-[0.75rem] font-semibold text-blue-200">
-            Public
-          </span>
-        )}
         {latestMessage !== undefined && (
           <div
             className={cn(
@@ -75,7 +64,6 @@ export function ChatRoomLink<
             )}
           >
             <>
-              <span className="italic">Last message: </span>
               <span className="truncate">
                 {[
                   latestMessage.content,

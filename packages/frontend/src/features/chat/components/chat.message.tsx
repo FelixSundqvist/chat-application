@@ -1,16 +1,15 @@
-import { cn } from "@/lib/style";
-import { useFirebaseAuth } from "@/lib/firebase/auth";
-
-import type { ProcessedChatMessage } from "@/features/chat/chat.types.ts";
-import { memo, useMemo } from "react";
-import { EyeIcon } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
+  TooltipProvider,
   TooltipTrigger,
 } from "@/components/tooltip.tsx";
-import { TooltipProvider } from "@radix-ui/react-tooltip";
+import type { ProcessedChatMessage } from "@/features/chat/chat.types.ts";
 import { useChatRoomMessages } from "@/features/chat/context/chat-room-users.context.tsx";
+import { useFirebaseAuth } from "@/lib/firebase/auth";
+import { cn } from "@/lib/style";
+import { EyeIcon } from "lucide-react";
+import { memo, useMemo } from "react";
 
 const timeFormatter = new Intl.DateTimeFormat(["en", "fi"], {
   timeStyle: "short",
@@ -42,7 +41,7 @@ function ChatMessage({ message }: { message: ProcessedChatMessage }) {
   const { authUser } = useFirebaseAuth();
   const { getUserById } = useChatRoomMessages();
 
-  const { isSentByMe, createdAt, seenByArray } = useMemo(() => {
+  const processedMessage = useMemo(() => {
     return {
       isSentByMe: message.createdBy === authUser?.uid,
       createdAt: timeFormatter.format(message.jsDate),
@@ -50,7 +49,7 @@ function ChatMessage({ message }: { message: ProcessedChatMessage }) {
         ([userId, timeStamp]) => ({
           id: [message.id, userId, timeStamp.toMillis()].join("-"),
           displayName: getUserById(userId)?.displayName ?? "Unknown",
-          seenAt: timeStamp.toDate().toLocaleString(["en", "fi"], {
+          seenAt: timeStamp?.toDate().toLocaleString(["en", "fi"], {
             year: "numeric",
             month: "short",
             day: "2-digit",
@@ -61,6 +60,8 @@ function ChatMessage({ message }: { message: ProcessedChatMessage }) {
       ),
     };
   }, [authUser?.uid, getUserById, message]);
+
+  const { isSentByMe, createdAt, seenByArray } = processedMessage;
 
   const styles = getStyles(isSentByMe);
 

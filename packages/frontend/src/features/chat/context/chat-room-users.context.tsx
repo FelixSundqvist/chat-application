@@ -1,3 +1,8 @@
+import { routePaths } from "@/app/routes.ts";
+import { auth } from "@/config/firebase.ts";
+import { useSubscribeToFirestoreCollection } from "@/lib/firebase/firestore.ts";
+import { callFirebaseFunction } from "@/lib/firebase/functions.ts";
+import { orderBy } from "firebase/firestore";
 import type { PropsWithChildren } from "react";
 import {
   createContext,
@@ -7,29 +12,34 @@ import {
   useMemo,
   useState,
 } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import type {
   ChatMessage,
   ChatMessageByDateTuple,
   User,
 } from "../chat.types.ts";
-import getUsersByIds from "@/features/chat/data/get-users-by-ids.ts";
-import { useNavigate, useParams } from "react-router-dom";
-import { useSubscribeToFirestoreCollection } from "@/lib/firebase/firestore.ts";
-import { routePaths } from "@/app/routes.ts";
-import { orderBy } from "firebase/firestore";
-import { auth } from "@/config/firebase.ts";
 
 const queryConstraints = [orderBy("createdAt", "asc")];
 
+/**
+ * A custom hook that provides logic and state for processing and displaying chat room messages.
+ *
+ * This hook manages the data retrieved from a Firestore collection dedicated to chat room messages.
+ * It handles subscribing to the Firestore messages, retrieving user information related to the chat room,
+ * and formatting the messages into a structure that can be presented in a grouped and user-friendly format.
+ *
+ * @function useChatRoomMessagesLogic
+ * @returns {Object} An object containing methods and properties to manage chat room messages:
+ * - rawMessages: Array of raw chat messages as retrieved from Firestore.
+ * - displayMessages: Array of formatted messages grouped by date and enriched with user display information.
+ * - getUserById: Function to resolve a user by their unique ID and retrieve their display information.
+ */
 const useChatRoomMessagesLogic = () => {
-  const [messageUsersRecord, setMessageUsersRecord] = useState<
-    Record<string, User>
-  >({});
-
+  const [roomUsers, setRoomUsers] = useState<User[]>([]);
   const { roomId = "" } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
 
-  const messages = useSubscribeToFirestoreCollection<ChatMessage>({
+  const rawMessages = useSubscribeToFirestoreCollection<ChatMessage>({
     collectionPath: `roomMessages/${roomId}/messages`,
     queryConstraints,
     onError: () => {
@@ -38,10 +48,12 @@ const useChatRoomMessagesLogic = () => {
   });
 
   useEffect(() => {
-    getUsersByIds(messages.map((m) => m.createdBy)).then((results) =>
-      setMessageUsersRecord(results),
-    );
-  }, [messages]);
+    callFirebaseFunction<User[], { roomId: string }>("getRoomUsers", {
+      roomId,
+    }).then((data) => {
+      setRoomUsers(data ?? []);
+    });
+  }, [roomId]);
 
   const getUserById = useCallback(
     (userId: string) => {
@@ -50,9 +62,9 @@ const useChatRoomMessagesLogic = () => {
           displayName: "You",
         };
       }
-      return messageUsersRecord[userId];
+      return roomUsers.find((user) => user.id === userId);
     },
-    [messageUsersRecord],
+    [roomUsers],
   );
 
   /**
@@ -60,11 +72,11 @@ const useChatRoomMessagesLogic = () => {
    * This hook retrieves user information associated with the messages
    * and processes the messages into a structure suitable for display.
    */
-  const uiMessages = useMemo(() => {
+  const displayMessages = useMemo(() => {
     const dateMessageTuple: ChatMessageByDateTuple[] = [];
 
-    messages.forEach((message) => {
-      const jsDate = message.createdAt.toDate();
+    rawMessages.forEach((message) => {
+      const jsDate = message.createdAt?.toDate() ?? new Date();
       const dateKey = jsDate.toLocaleDateString();
       const lastMessage = dateMessageTuple.at(-1);
       const user = getUserById(message.createdBy);
@@ -85,12 +97,11 @@ const useChatRoomMessagesLogic = () => {
     });
 
     return dateMessageTuple;
-  }, [getUserById, messages]);
+  }, [getUserById, rawMessages]);
 
   return {
-    messageUsersRecord,
-    messages,
-    uiMessages,
+    rawMessages,
+    displayMessages,
     getUserById,
   };
 };

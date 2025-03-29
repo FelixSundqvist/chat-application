@@ -1,23 +1,33 @@
 import { Button } from "@/components/button.tsx";
-import { useState } from "react";
-import { Loader, SendHorizonal } from "lucide-react";
+import { auth, db } from "@/config/firebase";
 import { cn } from "@/lib/style.ts";
+import { collection, doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { Loader, SendHorizonal } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
+import { useChatRooms } from "../context/chat-rooms.context";
 
-function ChatInput({
-  sendMessage,
-}: {
-  sendMessage: (message: string) => Promise<void>;
-}) {
+function ChatInput() {
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const { roomId } = useChatRooms();
 
   async function handleSendMessage() {
-    if (message.length === 0 || isSending) return;
+    if (message.length === 0 || isSending || roomId == null || roomId === "") {
+      return;
+    }
     setIsSending(true);
 
     try {
-      await sendMessage(message);
+      const messageRef = doc(
+        collection(db, "roomMessages", roomId, "messages"),
+      );
+      await setDoc(messageRef, {
+        content: message,
+        createdBy: auth.currentUser?.uid,
+        createdAt: serverTimestamp(),
+        seenBy: {},
+      });
     } catch (e) {
       toast.error((e as Error).message);
     } finally {

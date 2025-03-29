@@ -1,24 +1,23 @@
-import { useRef } from "react";
-import { useParams } from "react-router-dom";
-import { callFirebaseFunction } from "@/lib/firebase/functions.ts";
 import ChatInput from "@/features/chat/components/chat.input.tsx";
-import { useScrollToLatestMessage } from "@/features/chat/hooks/use-scroll-to-latest-message.ts";
 import { ChatMessages } from "@/features/chat/components/chat.messages.tsx";
-import { useSeenMessagesObserver } from "@/features/chat/hooks/use-seen-message-observer.ts";
 import {
   ChatRoomMessagesProvider,
   useChatRoomMessages,
 } from "@/features/chat/context/chat-room-users.context.tsx";
+import { useScrollToLatestMessage } from "@/features/chat/hooks/use-scroll-to-latest-message.ts";
+import { useSeenMessagesObserver } from "@/features/chat/hooks/use-seen-message-observer.ts";
+import { useRef } from "react";
+import { useParams } from "react-router-dom";
 
 function ChatRoomPage() {
   const { roomId = "" } = useParams<{ roomId: string }>();
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const { messages } = useChatRoomMessages();
+  const { rawMessages } = useChatRoomMessages();
 
-  useScrollToLatestMessage(scrollRef, messages);
-  useSeenMessagesObserver(roomId, messages);
+  useScrollToLatestMessage(scrollRef, rawMessages);
+  useSeenMessagesObserver(roomId, rawMessages);
 
   return (
     <div className="flex w-full h-full flex-col overflow-hidden">
@@ -27,14 +26,7 @@ function ChatRoomPage() {
         <div ref={scrollRef} />
       </div>
       <div>
-        <ChatInput
-          sendMessage={(message) =>
-            callFirebaseFunction("sendMessage", {
-              roomId: roomId,
-              content: message,
-            })
-          }
-        />
+        <ChatInput />
       </div>
     </div>
   );

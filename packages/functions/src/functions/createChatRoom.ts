@@ -1,8 +1,33 @@
 import * as admin from "firebase-admin";
 import { logger } from "firebase-functions";
+import { HttpsError, onCall } from "firebase-functions/https";
+import validator from "validator";
 import { db } from "../config";
+import { onCallAuthGuard } from "../utils/auth-guard";
+import { sanitize } from "../utils/sanitize";
 
-export async function createChatRoomAndAddUsers({
+export const createChatRoom = onCall<{
+  name: string;
+  invitedEmails: string[];
+}>({ enforceAppCheck: true }, async (request, response) => {
+  const userId = await onCallAuthGuard(request);
+  const { invitedEmails, name } = request.data;
+  const sanitizedName = sanitize(name);
+
+  for (const email of invitedEmails) {
+    if (!validator.isEmail(email)) {
+      throw new HttpsError("invalid-argument", "Invalid email address.");
+    }
+  }
+
+  return createChatRoomAndAddUsers({
+    name: sanitizedName,
+    currentUserId: userId,
+    invitedEmails,
+  });
+});
+
+async function createChatRoomAndAddUsers({
   name,
   currentUserId,
   invitedEmails,
@@ -31,7 +56,7 @@ export async function createChatRoomAndAddUsers({
 
   try {
     return db.runTransaction(async (transaction) => {
-      const roomRef = db.collection("privateRooms").doc();
+      const roomRef = db.collection("rooms").doc();
       const roomId = roomRef.id;
       const userRoomsCollection = db.collection("userRooms");
       const userIdsToAdd = [currentUserId, ...invitedUserIds];
@@ -47,6 +72,7 @@ export async function createChatRoomAndAddUsers({
         name,
         createdBy: currentUserId,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        userIds: userIdsToAdd,
       });
 
       // Step 2: Update the `userRooms` collection for all users

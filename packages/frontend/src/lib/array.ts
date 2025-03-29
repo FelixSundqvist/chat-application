@@ -24,7 +24,7 @@ export function arrayToRecord<T extends Record<string, unknown>, R>(
   array: T[],
   key: keyof T,
   mapFn?: (item: T) => R | T,
-) {
+): Record<string, R | T> {
   return array.reduce<Record<string, R | T>>((acc, item) => {
     const itemKey = item[key] as string;
 

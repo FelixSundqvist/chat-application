@@ -8,6 +8,7 @@
     "build": "nx affected -t lint build",
     "lint": "nx affected -t lint",
     "dev": "concurrently --kill-others-on-fail \"yarn emulators:start\" \"npx nx run-many -t dev\"",
+    "dev:inspect": "concurrently --kill-others-on-fail \"yarn emulators:start --inspect-functions\" \"npx nx run-many -t dev\"",
     "ci": "yarn install --no-immutable",
     "prepare": "husky",
     "emulators:start": "firebase emulators:start --import=./seed",
