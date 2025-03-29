@@ -1,8 +1,33 @@
 import * as admin from "firebase-admin";
 import { logger } from "firebase-functions";
+import { HttpsError, onCall } from "firebase-functions/https";
+import validator from "validator";
 import { db } from "../config";
+import { onCallAuthGuard } from "../utils/auth-guard";
+import { sanitize } from "../utils/sanitize";
 
-export async function createChatRoomAndAddUsers({
+export const createChatRoom = onCall<{
+  name: string;
+  invitedEmails: string[];
+}>({ enforceAppCheck: true }, async (request, response) => {
+  const userId = await onCallAuthGuard(request);
+  const { invitedEmails, name } = request.data;
+  const sanitizedName = sanitize(name);
+
+  for (const email of invitedEmails) {
+    if (!validator.isEmail(email)) {
+      throw new HttpsError("invalid-argument", "Invalid email address.");
+    }
+  }
+
+  return createChatRoomAndAddUsers({
+    name: sanitizedName,
+    currentUserId: userId,
+    invitedEmails,
+  });
+});
+
+async function createChatRoomAndAddUsers({
   name,
   currentUserId,
   invitedEmails,

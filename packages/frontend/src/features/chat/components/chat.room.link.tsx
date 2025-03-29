@@ -64,7 +64,6 @@ export function ChatRoomLink<TRoom extends WithId<ChatRoom>>({
             )}
           >
             <>
-              <span className="italic">Last message: </span>
               <span className="truncate">
                 {[
                   latestMessage.content,

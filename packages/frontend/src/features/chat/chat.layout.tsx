@@ -1,13 +1,14 @@
+import { Button } from "@/components/button.tsx";
 import Page from "@/components/page.tsx";
 import { SidebarProvider, useSidebar } from "@/components/sidebar.tsx";
-import { Outlet } from "react-router-dom";
+import InviteUserDialog from "@/features/chat/components/chat.invite-user.dialog.tsx";
+import ChatSidebar from "@/features/chat/components/chat.sidebar.tsx";
 import {
   ChatRoomsProvider,
   useChatRooms,
 } from "@/features/chat/context/chat-rooms.context.tsx";
-import { Button } from "@/components/button.tsx";
 import { MenuIcon } from "lucide-react";
-import ChatSidebar from "@/features/chat/components/chat.sidebar.tsx";
+import { Outlet } from "react-router-dom";
 
 function ChatLayout() {
   const { toggleSidebar } = useSidebar();
@@ -26,7 +27,10 @@ function ChatLayout() {
           >
             <MenuIcon />
           </Button>
-          <h1 className="text-2xl dark:text-gray-200">{currentRoom?.name}</h1>
+          <h1 className="text-2xl dark:text-gray-200 flex-1">
+            {currentRoom?.name}
+          </h1>
+          <InviteUserDialog />
         </div>
         <div className="flex-1 overflow-hidden">
           <Outlet />

@@ -4,6 +4,7 @@ import {
   DialogClose,
   DialogContent,
   DialogFooter,
+  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/dialog.tsx";
@@ -16,6 +17,7 @@ import {
   FormMessage,
 } from "@/components/form.tsx";
 import { Input } from "@/components/input.tsx";
+import { useChatRooms } from "@/features/chat/context/chat-rooms.context.tsx";
 import { callFirebaseFunction } from "@/lib/firebase/functions.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DialogDescription } from "@radix-ui/react-dialog";
@@ -25,15 +27,14 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 const formSchema = z.object({
-  name: z.string().min(3).max(20),
   email: z.string().email(),
 });
 
 function DialogForm({ onClose }: { onClose: () => void }) {
+  const { roomId } = useChatRooms();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
       email: "",
     },
     resetOptions: {
@@ -47,9 +48,9 @@ function DialogForm({ onClose }: { onClose: () => void }) {
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
     try {
-      await callFirebaseFunction("createChatRoom", {
-        name: data.name,
-        invitedEmails: [data.email],
+      await callFirebaseFunction("inviteUserToChatRoom", {
+        email: data.email,
+        roomId,
       });
     } catch (e) {
       toast.error((e as Error).message);
@@ -64,19 +65,6 @@ function DialogForm({ onClose }: { onClose: () => void }) {
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col gap-4"
       >
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Chat room name</FormLabel>
-              <FormControl>
-                <Input required {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         <FormField
           control={form.control}
           name="email"
@@ -94,7 +82,7 @@ function DialogForm({ onClose }: { onClose: () => void }) {
         <DialogFooter className="flex justify-end gap-4">
           <DialogClose>Cancel</DialogClose>
           <Button variant="default" type="submit" disabled={isSubmitting}>
-            Create
+            Send invite
           </Button>
         </DialogFooter>
       </form>
@@ -102,17 +90,19 @@ function DialogForm({ onClose }: { onClose: () => void }) {
   );
 }
 
-function CreateChatRoomDialog() {
+function InviteUserDialog() {
   const [isOpen, setOpen] = useState(false);
   return (
     <Dialog open={isOpen} onOpenChange={setOpen}>
-      <DialogTrigger className="truncate text-left font-semibold mt-2 p-2 text-sm">
-        + Create new room
+      <DialogTrigger className="truncate text-left font-semibold mt-2 p-2 text-sm text-white">
+        + Invite user
       </DialogTrigger>
       <DialogContent>
-        <DialogTitle>Create new chat room</DialogTitle>
+        <DialogHeader>
+          <DialogTitle>Invite user</DialogTitle>
+        </DialogHeader>
         <DialogDescription>
-          Create a new chat room and invite a user to join.
+          Invite another user to this chat room.
         </DialogDescription>
         <DialogForm onClose={() => setOpen(false)} />
       </DialogContent>
@@ -120,4 +110,4 @@ function CreateChatRoomDialog() {
   );
 }
 
-export default CreateChatRoomDialog;
+export default InviteUserDialog;
