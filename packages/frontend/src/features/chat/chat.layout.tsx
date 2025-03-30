@@ -13,6 +13,7 @@ import { Outlet } from "react-router-dom";
 function ChatLayout() {
   const { toggleSidebar } = useSidebar();
   const { currentRoom } = useChatRooms();
+
   return (
     <Page>
       <ChatSidebar />

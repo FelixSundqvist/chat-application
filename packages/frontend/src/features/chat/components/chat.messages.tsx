@@ -1,5 +1,5 @@
 import ChatMessage from "@/features/chat/components/chat.message.tsx";
-import { useChatRoomMessages } from "@/features/chat/context/chat-room-users.context.tsx";
+import { useChatRoomMessages } from "@/features/chat/context/chat-room-messages.context.tsx";
 import { useTranslation } from "react-i18next";
 
 export function ChatMessages() {

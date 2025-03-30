@@ -5,7 +5,7 @@ import {
   TooltipTrigger,
 } from "@/components/tooltip.tsx";
 import type { ProcessedChatMessage } from "@/features/chat/chat.types.ts";
-import { useChatRoomMessages } from "@/features/chat/context/chat-room-users.context.tsx";
+import { useChatRoomMessages } from "@/features/chat/context/chat-room-messages.context.tsx";
 import { useFirebaseAuth } from "@/lib/firebase/auth";
 import { cn } from "@/lib/style";
 import { EyeIcon } from "lucide-react";
