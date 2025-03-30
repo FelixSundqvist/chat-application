@@ -26,9 +26,19 @@ export const getRoomUsers = onCall<{ roomId: string }>(
     );
     const userSnapshots = await Promise.all(userRefs.map((ref) => ref.get()));
     return userSnapshots.map((snapshot) => {
+      const data = snapshot.data();
+      const displayNameAbbreviation = data?.displayName
+        ?.split(" ")
+        .map((n: string) => n[0])
+        .slice(0, 2)
+        .join(" ");
+
       return {
         id: snapshot.id,
-        ...snapshot.data(),
+        displayName: data?.displayName,
+        email: data?.email,
+        photoURL: data?.photoURL,
+        displayNameAbbreviation,
       };
     });
   },

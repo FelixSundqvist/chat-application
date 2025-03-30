@@ -2,11 +2,8 @@ export function uniqueArray<T>(array: T[]) {
   return [...new Set(array)];
 }
 
-export function arrayToRecord<T extends Record<string, unknown>>(
-  array: T[],
-  key: keyof T,
-): Record<string, T>;
-export function arrayToRecord<T extends Record<string, unknown>, R>(
+export function arrayToRecord<T>(array: T[], key: keyof T): Record<string, T>;
+export function arrayToRecord<T, R>(
   array: T[],
   key: keyof T,
   mapFn: (item: T) => R,
@@ -20,7 +17,7 @@ export function arrayToRecord<T extends Record<string, unknown>, R>(
  * @param {(item: T) => R | T} [mapFn] - An optional function to transform each object before adding it to the record.
  * @return {Record<string, R | T>} A record object where the key is the value of the specified key from each object, and the value is either the object itself or the result of the mapping function.
  */
-export function arrayToRecord<T extends Record<string, unknown>, R>(
+export function arrayToRecord<T, R>(
   array: T[],
   key: keyof T,
   mapFn?: (item: T) => R | T,

@@ -1,15 +1,7 @@
-import * as React from "react";
-import { Slot } from "@radix-ui/react-slot";
-import type { VariantProps } from "class-variance-authority";
-import { cva } from "class-variance-authority";
-import { PanelLeft } from "lucide-react";
-
-import { useIsMobile } from "@/hooks/use-mobile.tsx";
-import { cn } from "@/lib/style.ts";
 import { Button } from "@/components/button.tsx";
 import { Input } from "@/components/input.tsx";
 import { Separator } from "@/components/separator.tsx";
-import { Sheet, SheetContent } from "@/components/sheet.tsx";
+import { Sheet, SheetContent, SheetTitle } from "@/components/sheet.tsx";
 import { Skeleton } from "@/components/skeleton.tsx";
 import {
   Tooltip,
@@ -17,6 +9,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/tooltip.tsx";
+
+import { useIsMobile } from "@/hooks/use-mobile.tsx";
+import { cn } from "@/lib/style.ts";
+import { Slot } from "@radix-ui/react-slot";
+import type { VariantProps } from "class-variance-authority";
+import { cva } from "class-variance-authority";
+import { PanelLeft } from "lucide-react";
+import * as React from "react";
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -202,6 +202,7 @@ const Sidebar = React.forwardRef<
     if (isMobile) {
       return (
         <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
+          <SheetTitle hidden></SheetTitle>
           <SheetContent
             data-sidebar="sidebar"
             data-mobile="true"
