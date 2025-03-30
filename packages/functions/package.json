@@ -1,6 +1,6 @@
 {
   "name": "functions",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "scripts": {
     "lint": "eslint --fix",
     "dev": "esbuild --watch src/index.ts --bundle --platform=node --outdir=dist",
