@@ -2,6 +2,7 @@ import * as admin from "firebase-admin";
 import { onCall } from "firebase-functions/https";
 import { db } from "../config";
 import { onCallAuthGuard } from "../utils/auth-guard";
+import { validateIsUserInRoom } from "../utils/validateIsUserInRoom";
 
 export const markMessagesAsSeen = onCall<{
   roomId: string;
@@ -9,6 +10,7 @@ export const markMessagesAsSeen = onCall<{
 }>({ enforceAppCheck: true }, async (request, response) => {
   const userId = await onCallAuthGuard(request);
   const { roomId, messageIds } = request.data;
+  await validateIsUserInRoom(userId, roomId);
   const messageRef = db
     .collection("roomMessages")
     .doc(roomId)
