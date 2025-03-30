@@ -21,9 +21,7 @@ function ChatLayout() {
         <div className="w-full border-b-gray-200 flex items-center gap-1 border-b-2 p-1 h-12">
           <Button
             variant="ghost"
-            className="
-            text-gray-100
-            dark:hover:text-gray-300 border-1 h-[25px] w-[25px]"
+            className="dark:hover:text-gray-300 border-1 h-[25px] w-[25px]"
             onClick={toggleSidebar}
           >
             <MenuIcon />

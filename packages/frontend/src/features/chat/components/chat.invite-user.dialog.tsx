@@ -100,7 +100,7 @@ function InviteUserDialog() {
   const [isOpen, setOpen] = useState(false);
   return (
     <Dialog open={isOpen} onOpenChange={setOpen}>
-      <DialogTrigger className="truncate text-left font-semibold mt-2 p-2 text-sm text-white">
+      <DialogTrigger className="truncate text-left font-semibold p-2 text-sm">
         + {t("InviteUserDialog.title")}
       </DialogTrigger>
       <DialogContent>
