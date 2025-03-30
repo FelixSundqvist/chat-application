@@ -3,7 +3,7 @@ import { ChatMessages } from "@/features/chat/components/chat.messages.tsx";
 import {
   ChatRoomMessagesProvider,
   useChatRoomMessages,
-} from "@/features/chat/context/chat-room-users.context.tsx";
+} from "@/features/chat/context/chat-room-messages.context";
 import { useScrollToLatestMessage } from "@/features/chat/hooks/use-scroll-to-latest-message.ts";
 import { useSeenMessagesObserver } from "@/features/chat/hooks/use-seen-message-observer.ts";
 import { useRef } from "react";

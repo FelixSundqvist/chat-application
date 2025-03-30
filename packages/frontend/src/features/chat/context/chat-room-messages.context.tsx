@@ -4,6 +4,7 @@ import { arrayToRecord } from "@/lib/array.ts";
 import { useSubscribeToFirestoreCollection } from "@/lib/firebase/firestore.ts";
 import { callFirebaseFunction } from "@/lib/firebase/functions.ts";
 import { orderBy } from "firebase/firestore";
+import i18n from "i18next";
 import type { PropsWithChildren } from "react";
 import {
   createContext,
@@ -61,12 +62,12 @@ const useChatRoomMessagesLogic = () => {
     (userId: string) => {
       if (auth.currentUser?.uid === userId) {
         return {
-          displayName: "You",
+          displayName: i18n.t("Common.you"),
         };
       }
       return (
         roomUsers[userId] ?? {
-          displayName: "Unknown",
+          displayName: i18n.t("Common.unknownUser"),
         }
       );
     },
@@ -90,7 +91,7 @@ const useChatRoomMessagesLogic = () => {
       const formattedMessage = {
         ...message,
         jsDate,
-        userDisplayName: user?.displayName ?? "Unknown",
+        userDisplayName: user?.displayName ?? i18n.t("Common.unknownUser"),
       };
 
       const isNewDateKey = !lastMessage || lastMessage?.[0] !== dateKey;

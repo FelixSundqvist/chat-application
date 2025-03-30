@@ -1,0 +1,44 @@
+{
+  "SignIn": {
+    "welcome": "Welcome",
+    "signIn": "Sign in",
+    "linkSent": "Sign in link sent",
+    "checkYourEmail": "Check your email for a sign in link",
+    "orContinueWith": "Or continue with",
+    "google": "Google",
+    "Form": {
+      "email": "Email"
+    }
+  },
+  "Error": {
+    "notFound": "404 - Not found",
+    "genericError": "Oooops... Something went wrong."
+  },
+  "Chat": {
+    "chats": "Chats",
+    "welcomeToTheChatApp": "Welcome to the chat app!",
+    "selectARoom": "Select a room to start chatting.",
+    "noMessagesYet": "No messages yet.",
+    "seenBy": "Seen by {{ userName }}",
+    "userToInvite": "User to invite",
+    "sendMessage": "Send message",
+    "InviteUserDialog": {
+      "title": "Invite user",
+      "description": "Invite another user to this chat room.",
+      "sendInvite": "Send invite"
+    },
+    "CreateRoomDialog": {
+      "title": "Create new room",
+      "description": "Create a new chat room and invite a user to join.",
+      "name": "Room name"
+    }
+  },
+  "Common": {
+    "signOut": "Sign out",
+    "email": "Email",
+    "create": "Create",
+    "cancel": "Cancel",
+    "you": "You",
+    "unknownUser": "Unknown user"
+  }
+}

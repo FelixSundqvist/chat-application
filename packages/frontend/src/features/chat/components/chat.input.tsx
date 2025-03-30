@@ -4,10 +4,14 @@ import { cn } from "@/lib/style.ts";
 import { collection, doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { Loader, SendHorizonal } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useChatRooms } from "../context/chat-rooms.context";
 
 function ChatInput() {
+  const { t } = useTranslation("translations", {
+    keyPrefix: "Chat",
+  });
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
   const { roomId } = useChatRooms();
@@ -45,17 +49,17 @@ function ChatInput() {
     >
       <div className="relative w-full h-full px-2">
         <label htmlFor="message" className="sr-only">
-          Send message
+          {t("sendMessage")}
         </label>
         <textarea
           id="message"
-          aria-label={"Send message"}
+          aria-label={t("sendMessage")}
           disabled={isSending}
           className={cn(
             "h-full w-full p-2 bg-gray-200 focus:outline-gray-200 rounded-xl dark:bg-gray-600 dark:focus:outline-gray-800 dark:text-gray-200 opacity-80",
             isSending && "dark:bg-gray-500 opacity-20",
           )}
-          placeholder="Send message"
+          placeholder={t("sendMessage")}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={(e) => {
