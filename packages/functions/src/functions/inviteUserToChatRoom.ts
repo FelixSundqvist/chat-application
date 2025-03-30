@@ -3,6 +3,7 @@ import { HttpsError, onCall } from "firebase-functions/https";
 import validator from "validator";
 import { db } from "../config";
 import { onCallAuthGuard } from "../utils/auth-guard";
+import { validateIsUserInRoom } from "../utils/validateIsUserInRoom";
 
 export const inviteUserToChatRoom = onCall<{
   roomId: string;
@@ -22,6 +23,8 @@ export const inviteUserToChatRoom = onCall<{
     throw new HttpsError("invalid-argument", "Room not found.");
   }
 
+  await validateIsUserInRoom(userId, roomId);
+
   const existingInvitedUser = await db
     .collection("users")
     .where("email", "==", email)
@@ -29,8 +32,8 @@ export const inviteUserToChatRoom = onCall<{
     .get();
 
   if (!existingInvitedUser.empty) {
-    const id = existingInvitedUser.docs[0].id;
     const userRoomsCollection = db.collection("userRooms");
+    const id = existingInvitedUser.docs[0].id;
     const userRoomsRef = userRoomsCollection.doc(id);
 
     await userRoomsRef.update({
