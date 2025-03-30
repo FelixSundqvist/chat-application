@@ -138,8 +138,6 @@ function useSubscribeToFirestoreCollection<
   return valuesArray;
 }
 
-export { useSubscribeToFirestoreCollection };
-
 export function useSubscribeToFirestoreDoc<TDocValue>({
   docPath,
 }: {
@@ -169,3 +167,5 @@ export function useSubscribeToFirestoreDoc<TDocValue>({
 
   return data;
 }
+
+export { useSubscribeToFirestoreCollection };

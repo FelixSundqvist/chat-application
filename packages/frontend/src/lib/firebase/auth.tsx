@@ -1,4 +1,6 @@
+import { routes } from "@/app/routes.ts";
 import { auth } from "@/config/firebase.ts";
+import Logger from "@/lib/logger.ts";
 import {
   GoogleAuthProvider,
   isSignInWithEmailLink,
@@ -11,9 +13,13 @@ import {
 import type { PropsWithChildren } from "react";
 import { createContext, use, useEffect, useState } from "react";
 import { redirect } from "react-router-dom";
-import Logger from "@/lib/logger.ts";
-import { routes } from "@/app/routes.ts";
 import { toast } from "sonner";
+
+type AuthContextType = {
+  authUser: User | null;
+  isAuthenticated: boolean;
+  hasAuthLoaded: boolean;
+};
 
 export function signInWithGoogle() {
   const provider = new GoogleAuthProvider();
@@ -69,12 +75,6 @@ export async function signOut() {
     Logger.log(error);
   }
 }
-
-type AuthContextType = {
-  authUser: User | null;
-  isAuthenticated: boolean;
-  hasAuthLoaded: boolean;
-};
 
 const FirebaseAuthContext = createContext<AuthContextType | undefined>(
   undefined,

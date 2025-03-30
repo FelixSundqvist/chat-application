@@ -1,5 +1,6 @@
 import { routePaths } from "@/app/routes.ts";
 import { auth } from "@/config/firebase.ts";
+import { arrayToRecord } from "@/lib/array.ts";
 import { useSubscribeToFirestoreCollection } from "@/lib/firebase/firestore.ts";
 import { callFirebaseFunction } from "@/lib/firebase/functions.ts";
 import { orderBy } from "firebase/firestore";
@@ -29,13 +30,13 @@ const queryConstraints = [orderBy("createdAt", "asc")];
  * and formatting the messages into a structure that can be presented in a grouped and user-friendly format.
  *
  * @function useChatRoomMessagesLogic
- * @returns {Object} An object containing methods and properties to manage chat room messages:
+ * @returns An object containing methods and properties to manage chat room messages:
  * - rawMessages: Array of raw chat messages as retrieved from Firestore.
  * - displayMessages: Array of formatted messages grouped by date and enriched with user display information.
  * - getUserById: Function to resolve a user by their unique ID and retrieve their display information.
  */
 const useChatRoomMessagesLogic = () => {
-  const [roomUsers, setRoomUsers] = useState<User[]>([]);
+  const [roomUsers, setRoomUsers] = useState<Record<string, User>>({});
   const { roomId = "" } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
 
@@ -48,10 +49,11 @@ const useChatRoomMessagesLogic = () => {
   });
 
   useEffect(() => {
-    callFirebaseFunction<User[], { roomId: string }>("getRoomUsers", {
+    callFirebaseFunction("getRoomUsers", {
       roomId,
     }).then((data) => {
-      setRoomUsers(data ?? []);
+      const record = arrayToRecord(data, "id");
+      setRoomUsers(record);
     });
   }, [roomId]);
 
@@ -62,7 +64,11 @@ const useChatRoomMessagesLogic = () => {
           displayName: "You",
         };
       }
-      return roomUsers.find((user) => user.id === userId);
+      return (
+        roomUsers[userId] ?? {
+          displayName: "Unknown",
+        }
+      );
     },
     [roomUsers],
   );
