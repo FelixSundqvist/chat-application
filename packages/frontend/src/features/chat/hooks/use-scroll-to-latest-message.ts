@@ -2,7 +2,7 @@ import type { ChatMessage } from "@/features/chat/chat.types.ts";
 import usePrevious from "@/hooks/use-previous.ts";
 import { useFirebaseAuth } from "@/lib/firebase/auth.tsx";
 import type { RefObject } from "react";
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 
 /**
  * Scrolls to the bottom of the chat after initial load
@@ -16,7 +16,7 @@ export function useScrollToLatestMessage(
 
   const previousMessages = usePrevious(messages);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (messages.length === 0) return;
 
     // NOTE: When the page is loaded, scroll to bottom instantly

@@ -47,7 +47,9 @@ export function ChatRoomLink<TRoom extends WithId<ChatRoom>>({
     <div
       className={cn(
         "cursor-pointer p-1 my-1 rounded-xl",
-        isSelected ? "bg-blue-700" : "hover:bg-blue-500  hover:text-white",
+        isSelected
+          ? "bg-blue-700 text-white"
+          : "hover:bg-blue-500  hover:text-white",
       )}
     >
       <Link
@@ -59,8 +61,8 @@ export function ChatRoomLink<TRoom extends WithId<ChatRoom>>({
         {latestMessage !== undefined && (
           <div
             className={cn(
-              "block px-1 font-light text-sm flex-wrap text-gray-300",
-              isSelected && "text-gray-w00",
+              "block font-light text-sm flex-wrap",
+              isSelected && "text-gray-200",
             )}
           >
             <>

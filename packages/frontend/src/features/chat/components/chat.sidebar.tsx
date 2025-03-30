@@ -120,7 +120,7 @@ function ChatSidebar() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={signOut} className="cursor-pointer">
                   <LogOut />
-                  {t("signOut")}
+                  {t("Common.signOut")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
