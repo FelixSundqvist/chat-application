@@ -1,12 +1,12 @@
-import { useRouteError } from "react-router-dom";
 import GenericError from "@/features/error/components/generic-error.tsx";
+import { useRouteError } from "react-router-dom";
 
 function RouteErrorBoundary() {
   const error = useRouteError();
 
   console.error("RouteErrorBoundary: ", error);
 
-  // Handle different types of errors here
+  // NOTE: Handle different types of errors here
 
   return <GenericError />;
 }

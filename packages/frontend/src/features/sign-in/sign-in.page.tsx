@@ -1,4 +1,3 @@
-import Page from "@/components/page.tsx";
 import { Button } from "@/components/button.tsx";
 import {
   Card,
@@ -7,15 +6,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/card.tsx";
-
-import { sendEmailLink, signInWithGoogle } from "@/lib/firebase/auth.tsx";
 import { Input } from "@/components/input.tsx";
 import { Label } from "@/components/label.tsx";
+import Page from "@/components/page.tsx";
+
+import { sendEmailLink, signInWithGoogle } from "@/lib/firebase/auth.tsx";
 import type { FormEvent } from "react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 function SignInPage() {
   const [emailSent, setEmailSent] = useState(false);
+
+  const { t } = useTranslation("translations", {
+    keyPrefix: "SignIn",
+  });
 
   async function onEmailSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -32,9 +37,9 @@ function SignInPage() {
       <Page className={signInPageClass}>
         <Card className="w-[350px]">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Sign in link sent</CardTitle>
+            <CardTitle className="text-2xl">{t("linkSent")}</CardTitle>
             <CardDescription className="flex gap-2 flex-col">
-              Check your email for a sign in link
+              {t("checkYourEmail")}
             </CardDescription>
           </CardHeader>
         </Card>
@@ -45,15 +50,15 @@ function SignInPage() {
     <Page className={signInPageClass}>
       <Card className="w-[350px] bg-background">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Welcome</CardTitle>
+          <CardTitle className="text-2xl">{t("welcome")}</CardTitle>
           <CardDescription className="flex gap-2 flex-col">
-            Sign in
+            {t("signIn")}
           </CardDescription>
         </CardHeader>
         <CardContent className="flex gap-6 flex-col">
           <form className="flex flex-col gap-4" onSubmit={onEmailSubmit}>
             <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t("Form.email")}</Label>
               <Input
                 id="email"
                 name="email"
@@ -63,12 +68,12 @@ function SignInPage() {
               />
             </div>
             <Button type="submit" className="w-full rounded-xl">
-              Sign in
+              {t("signIn")}
             </Button>
           </form>
           <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
             <span className="relative z-10 px-2 text-muted-foreground">
-              Or continue with
+              {t("orContinueWith")}
             </span>
           </div>
           <div className="flex flex-col gap-4">
@@ -83,7 +88,7 @@ function SignInPage() {
                   fill="currentColor"
                 />
               </svg>
-              Google
+              {t("google")}
             </Button>
           </div>
         </CardContent>

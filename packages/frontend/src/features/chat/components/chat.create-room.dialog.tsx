@@ -21,6 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -30,6 +31,8 @@ const formSchema = z.object({
 });
 
 function DialogForm({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -69,7 +72,7 @@ function DialogForm({ onClose }: { onClose: () => void }) {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Chat room name</FormLabel>
+              <FormLabel>{t("Chat.CreateRoomDialog.name")}</FormLabel>
               <FormControl>
                 <Input required {...field} />
               </FormControl>
@@ -82,7 +85,7 @@ function DialogForm({ onClose }: { onClose: () => void }) {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>User to invite</FormLabel>
+              <FormLabel>{t("Common.email")}</FormLabel>
               <FormControl>
                 <Input required {...field} />
               </FormControl>
@@ -92,9 +95,9 @@ function DialogForm({ onClose }: { onClose: () => void }) {
         />
 
         <DialogFooter className="flex justify-end gap-4">
-          <DialogClose>Cancel</DialogClose>
+          <DialogClose>{t("Common.cancel")}</DialogClose>
           <Button variant="default" type="submit" disabled={isSubmitting}>
-            Create
+            {t("Common.create")}
           </Button>
         </DialogFooter>
       </form>
@@ -103,17 +106,18 @@ function DialogForm({ onClose }: { onClose: () => void }) {
 }
 
 function CreateChatRoomDialog() {
+  const { t } = useTranslation("translations", {
+    keyPrefix: "Chat.CreateRoomDialog",
+  });
   const [isOpen, setOpen] = useState(false);
   return (
     <Dialog open={isOpen} onOpenChange={setOpen}>
       <DialogTrigger className="truncate text-left font-semibold mt-2 p-2 text-sm">
-        + Create new room
+        + {t("title")}
       </DialogTrigger>
       <DialogContent>
-        <DialogTitle>Create new chat room</DialogTitle>
-        <DialogDescription>
-          Create a new chat room and invite a user to join.
-        </DialogDescription>
+        <DialogTitle>{t("title")}</DialogTitle>
+        <DialogDescription>{t("description")}</DialogDescription>
         <DialogForm onClose={() => setOpen(false)} />
       </DialogContent>
     </Dialog>

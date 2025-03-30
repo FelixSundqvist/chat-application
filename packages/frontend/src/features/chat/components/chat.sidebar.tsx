@@ -25,12 +25,14 @@ import { signOut, useFirebaseAuth } from "@/lib/firebase/auth.tsx";
 import Logger from "@/lib/logger.ts";
 import { ChevronsUpDown, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { v4 } from "uuid";
 
 function ChatSidebar() {
   const { roomId } = useParams<{ roomId: string }>();
   const { authUser } = useFirebaseAuth();
+  const { t } = useTranslation();
 
   const { rooms, latestMessageRecord } = useChatRooms();
 
@@ -55,7 +57,7 @@ function ChatSidebar() {
   return (
     <Sidebar>
       <SidebarHeader className="flex justify-center gap-2 px-2 pt-[1.2rem]">
-        <h1 className={"text-lg font-bold"}>Chats</h1>
+        <h1 className={"text-lg font-bold"}>{t("Chat.chats")}</h1>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup key={refreshKey}>
@@ -118,7 +120,7 @@ function ChatSidebar() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={signOut} className="cursor-pointer">
                   <LogOut />
-                  Sign out
+                  {t("signOut")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
